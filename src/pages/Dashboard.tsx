@@ -12,14 +12,14 @@ export default function Dashboard() {
         <h1 className="mb-8 text-3xl font-bold">Bonjour Daniel</h1>
 
         <div className="grid grid-cols-2 gap-4">
-          <div className="rounded-lg border border-neutral-300 bg-neutral-50 p-4">
+          <div className="rounded-lg border border-neutral-300 bg-[#D4E7FA] p-4">
             <strong className="block text-2xl">300</strong>
             <span className="mt-2 block text-sm text-neutral-700">
               km parcourus
             </span>
           </div>
 
-          <div className="rounded-lg border border-neutral-300 bg-neutral-50 p-4">
+          <div className="rounded-lg border border-neutral-300 bg-[#D4E7FA] p-4">
             <strong className="block text-2xl">10</strong>
             <span className="mt-2 block text-sm text-neutral-700">
               semaines consécutives

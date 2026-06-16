@@ -3,8 +3,8 @@ import { NavLink } from "react-router-dom";
 
 export default function BottomNav() {
   const baseClass =
-    "flex flex-col items-center gap-1 text-[11px] text-neutral-500";
-  const activeClass = "font-bold text-neutral-900";
+    "flex flex-col items-center gap-1 text-[11px]";
+  const activeClass = "font-bold text-[#27509B]";
   const isConnected = "true";
 
   return (

@@ -20,8 +20,8 @@ export function RetailerCard({
       <button
         className={`mt-5 w-full rounded-lg px-4 py-3 text-sm font-bold ${
           secondary
-            ? "border border-neutral-800 bg-white text-neutral-800 hover:bg-neutral-100"
-            : "bg-neutral-800 text-white hover:bg-neutral-600"
+            ? "border border-[#27509B] text-[#27509B] bg-white text-neutral-800 hover:bg-neutral-100"
+            : "bg-[#27509B] text-white hover:bg-[#00205B]"
         }`}
       >
         {button}

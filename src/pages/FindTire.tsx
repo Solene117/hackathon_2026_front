@@ -31,8 +31,8 @@ export default function FindTire() {
           <h2 className="text-2xl font-bold">Données connectées</h2>
 
           <div className="mt-4 space-y-2 text-sm">
-            <p>✓ Strava connecté</p>
-            <p>+ Connecter Garmin</p>
+            <p>Strava connecté !</p>
+            <p>Connecter Garmin maintenant.</p>
             <p className="pt-2 text-neutral-600">
               Analyse basée sur vos dernières sorties pour affiner la
               recommandation.
@@ -59,7 +59,7 @@ export default function FindTire() {
           </div>
 
           <Link to="/retailers">
-            <button className="mt-5 w-full rounded-lg bg-neutral-800 px-4 py-3 text-sm font-bold text-white">
+            <button className="mt-5 w-full rounded-lg bg-[#27509B] px-4 py-3 text-sm font-bold text-white">
               Voir les revendeurs
             </button>
           </Link>
