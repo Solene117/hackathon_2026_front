@@ -23,12 +23,12 @@ export default function Home() {
 
           <div className="mt-6 flex flex-col gap-3">
             <Link to="/login">
-              <button className="w-full rounded-lg bg-neutral-800 px-4 py-3 text-sm font-bold text-white">
+              <button className="w-full rounded-lg bg-[#27509B] px-4 py-3 text-sm font-bold text-white">
                 Commencer
               </button>
             </Link>
 
-            <button className="w-full rounded-lg bg-neutral-800 px-4 py-3 text-sm font-bold text-white">
+            <button className="w-full rounded-lg bg-[#27509B] px-4 py-3 text-sm font-bold text-white">
               Connecter Strava / Garmin
             </button>
           </div>

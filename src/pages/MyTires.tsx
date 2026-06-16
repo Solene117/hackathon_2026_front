@@ -13,7 +13,7 @@ export default function MyTires() {
           Sélectionnez un pneu pour consulter son état.
         </p>
 
-        <button className="mb-5 flex w-full items-center justify-center gap-2 rounded-xl bg-neutral-800 px-4 py-3 font-semibold text-white shadow-sm hover:bg-neutral-600">
+        <button className="mb-5 flex w-full items-center justify-center gap-2 rounded-xl bg-[#27509B] px-4 py-3 font-semibold text-white shadow-sm hover:bg-[#00205B]">
           <Plus size={18} />
           Ajouter un pneu
         </button>

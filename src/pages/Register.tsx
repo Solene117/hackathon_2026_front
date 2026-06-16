@@ -25,22 +25,22 @@ export default function Register() {
             <input
               type="text"
               placeholder="Prénom"
-              className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-3 py-3 text-sm"
+              className="w-full rounded-lg border border-neutral-300 bg-[#D4E7FA] px-3 py-3 text-sm"
             />
 
             <input
               type="email"
               placeholder="Email"
-              className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-3 py-3 text-sm"
+              className="w-full rounded-lg border border-neutral-300 bg-[#D4E7FA] px-3 py-3 text-sm"
             />
 
             <input
               type="password"
               placeholder="Mot de passe"
-              className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-3 py-3 text-sm"
+              className="w-full rounded-lg border border-neutral-300 bg-[#D4E7FA] px-3 py-3 text-sm"
             />
 
-            <button className="w-full rounded-lg bg-neutral-800 px-4 py-3 text-sm font-bold text-white">
+            <button className="w-full rounded-lg bg-[#27509B] px-4 py-3 text-sm font-bold text-white">
               Créer mon compte
             </button>
           </form>

@@ -16,7 +16,7 @@ export default function Activities() {
       <main className="p-5 pb-24">
         <h1 className="mb-5 text-2xl font-bold">Mes activités</h1>
 
-        <button className="mb-5 flex w-full items-center justify-center gap-2 rounded-xl bg-neutral-800 px-4 py-3 font-semibold text-white shadow-sm hover:bg-neutral-600">
+        <button className="mb-5 flex w-full items-center justify-center gap-2 rounded-xl bg-[#27509B] px-4 py-3 font-semibold text-white shadow-sm hover:bg-[#00205B]">
           <Plus size={18} />
           Ajouter une activité
         </button>
