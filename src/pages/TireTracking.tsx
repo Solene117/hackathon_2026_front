@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Header from "../components/Header";
 import RecommendationModal from "./RecommendationModal";
+import MichelinProgressBar from "../components/ProgressBar";
 
 export default function TireTracking() {
   const [showRecommendation, setShowRecommendation] = useState(false);
@@ -14,7 +15,7 @@ export default function TireTracking() {
       )}
 
       <div>
-        <Header title="← Suivi du pneu" />
+        <Header title="Suivi du pneu" />
 
         <main className="space-y-5 p-5 pb-24">
           <section className="rounded-xl border border-neutral-300 p-5">
@@ -30,7 +31,7 @@ export default function TireTracking() {
               Roue arrière
             </p>
 
-            <span className="mt-3 inline-block rounded-full bg-neutral-100 px-3 py-2 text-xs">
+            <span className="mt-3 inline-block rounded-full bg-[#D4E7FA] px-3 py-2 text-xs font-medium text-[#27509B]">
               Valve connectée active
             </span>
           </section>
@@ -41,15 +42,11 @@ export default function TireTracking() {
             </h2>
 
             <div className="mt-4 flex items-center justify-between">
-              <strong className="text-3xl">42%</strong>
+              <MichelinProgressBar value={42} />
 
-              <span className="rounded-full bg-neutral-100 px-3 py-2 text-xs">
+              <span className="rounded-full bg-[#D4E7FA] px-3 py-2 text-xs font-medium text-[#27509B]">
                 Bon état
               </span>
-            </div>
-
-            <div className="mt-3 h-2 overflow-hidden rounded-full bg-neutral-300">
-              <div className="h-full w-[42%] rounded-full bg-[#D4E7FA]0" />
             </div>
 
             <p className="mt-3 text-sm text-neutral-600">
@@ -58,7 +55,7 @@ export default function TireTracking() {
 
             <button
               onClick={() => setShowRecommendation(true)}
-              className="mt-5 w-full rounded-lg bg-[#27509B] px-4 py-3 text-sm font-bold text-white"
+              className="mt-5 w-full rounded-lg bg-[#27509B] hover:bg-[#1a3d7a] px-4 py-3 text-sm font-bold text-white"
             >
               Voir recommandation
             </button>
