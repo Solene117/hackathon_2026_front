@@ -1,7 +1,16 @@
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
+import StravaConnectButton from "../components/StravaConnectButton";
+import { useActivities } from "../hooks/useActivities";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function FindTire() {
+  const { isAuthenticated } = useAuth();
+  const { activities, isLoading } = useActivities(isAuthenticated);
+  const hasStravaActivities = activities.some(
+    (activity) => activity.source === "STRAVA",
+  );
+
   return (
     <div>
       <Header title="Trouver mon pneu" />
@@ -30,9 +39,33 @@ export default function FindTire() {
         <section className="rounded-xl border border-neutral-300 p-5">
           <h2 className="text-2xl font-bold">Données connectées</h2>
 
-          <div className="mt-4 space-y-2 text-sm">
-            <p>Strava connecté !</p>
-            <p>Connecter Garmin maintenant.</p>
+          <div className="mt-4 space-y-3 text-sm">
+            {!isAuthenticated && (
+              <p>
+                <Link to="/login" className="font-semibold text-[#27509B] underline">
+                  Connectez-vous
+                </Link>{" "}
+                pour lier Strava et importer vos sorties.
+              </p>
+            )}
+
+            {isAuthenticated && isLoading && (
+              <p className="text-neutral-600">Chargement des activités...</p>
+            )}
+
+            {isAuthenticated && !isLoading && hasStravaActivities && (
+              <p className="font-semibold text-green-700">Strava connecté</p>
+            )}
+
+            {isAuthenticated && !isLoading && !hasStravaActivities && (
+              <>
+                <p className="text-neutral-700">
+                  Liez Strava pour analyser vos dernières sorties.
+                </p>
+                <StravaConnectButton />
+              </>
+            )}
+
             <p className="pt-2 text-neutral-600">
               Analyse basée sur vos dernières sorties pour affiner la
               recommandation.

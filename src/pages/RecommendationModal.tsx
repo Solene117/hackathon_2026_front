@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 type RecommendationModalProps = {
   onClose: () => void;
 };
@@ -56,9 +58,12 @@ export default function RecommendationModal({
             <Chip>Résistance renforcée</Chip>
           </div>
 
-          <button className="mt-6 w-full rounded-lg bg-[#27509B] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#00205B]">
+          <Link
+            to="/retailers"
+            className="mt-6 block w-full rounded-lg bg-[#27509B] px-4 py-3 text-center text-sm font-bold text-white transition hover:bg-[#00205B]"
+          >
             Voir les revendeurs
-          </button>
+          </Link>
 
           <button
             onClick={onClose}

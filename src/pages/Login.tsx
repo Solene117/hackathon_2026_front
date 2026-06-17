@@ -1,13 +1,33 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
+import { getAuthErrorMessage, useAuth } from "../contexts/AuthContext";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login, isAuthenticated, isLoading } = useAuth();
+  const [mail, setMail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function handleLogin(e: React.FormEvent) {
+  if (!isLoading && isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
-    localStorage.setItem("isConnected", "true");
-    navigate("/dashboard");
+    setError(null);
+    setIsSubmitting(true);
+
+    try {
+      await login(mail, password);
+      navigate("/dashboard");
+    } catch (err) {
+      setError(getAuthErrorMessage(err));
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -25,24 +45,42 @@ export default function Login() {
             <input
               type="email"
               placeholder="Email"
+              value={mail}
+              onChange={(e) => setMail(e.target.value)}
+              required
+              autoComplete="email"
               className="w-full rounded-lg border border-neutral-300 bg-[#D4E7FA] px-3 py-3 text-sm"
             />
 
             <input
               type="password"
               placeholder="Mot de passe"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              autoComplete="current-password"
               className="w-full rounded-lg border border-neutral-300 bg-[#D4E7FA] px-3 py-3 text-sm"
             />
 
-            <button className="w-full rounded-lg bg-[#27509B] px-4 py-3 text-sm font-bold text-white">
-              Se connecter
+            {error && (
+              <p className="text-sm text-red-600" role="alert">
+                {error}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full rounded-lg bg-[#27509B] px-4 py-3 text-sm font-bold text-white disabled:opacity-60"
+            >
+              {isSubmitting ? "Connexion..." : "Se connecter"}
             </button>
           </form>
 
           <p className="mt-5 text-center text-sm">
             Pas encore de compte ?{" "}
             <Link to="/register" className="font-bold underline">
-              S’inscrire
+              S'inscrire
             </Link>
           </p>
         </section>
