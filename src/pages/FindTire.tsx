@@ -4,6 +4,7 @@ import { Plus } from "lucide-react";
 import StravaConnectButton from "../components/StravaConnectButton";
 import { useActivities } from "../hooks/useActivities";
 import { useAuth } from "../contexts/AuthContext";
+import { Plus } from "lucide-react";
 
 export default function FindTire() {
   const { isAuthenticated } = useAuth();

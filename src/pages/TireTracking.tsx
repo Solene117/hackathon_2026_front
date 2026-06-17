@@ -38,7 +38,7 @@ export default function TireTracking() {
             <h2 className="text-2xl font-bold">État estimé</h2>
 
             <div className="mt-4 flex items-center justify-between">
-              <strong className="text-3xl font-bold text-[#27509B]">42%</strong>
+              <MichelinProgressBar value={42} />
 
               <span className="rounded-full bg-[#D4E7FA] px-3 py-2 text-xs font-medium text-[#27509B]">
                 Bon état
@@ -48,11 +48,9 @@ export default function TireTracking() {
             <div className="mt-4">
               <MichelinProgressBar value={42} />
             </div>
-
             <p className="mt-4 text-sm text-neutral-600">
               Estimé à partir de vos données d’usage et des données remontées.
             </p>
-
             <button
               onClick={() => setShowRecommendation(true)}
               className="mt-5 w-full rounded-lg bg-[#27509B] px-4 py-3 text-sm font-bold text-white hover:bg-[#1a3d7a]"
