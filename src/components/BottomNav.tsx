@@ -1,4 +1,4 @@
-import { Home, Search, CircleGauge, ChartLine, BookOpen } from "lucide-react";
+import { Home, Search, CircleGauge, ChartLine, Boxes } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -51,13 +51,13 @@ export default function BottomNav() {
       </NavLink>
 
       <NavLink
-        to="/guide"
+        to="/communaute"
         className={({ isActive }) =>
           `${baseClass} ${isActive ? activeClass : ""}`
         }
       >
-        <BookOpen size={20} />
-        <span>Guide</span>
+        <Boxes size={20} />
+        <span>Communauté</span>
       </NavLink>
     </nav>
   );

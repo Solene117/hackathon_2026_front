@@ -58,16 +58,15 @@ export default function RecommendationModal({
             <Chip>Résistance renforcée</Chip>
           </div>
 
-          <Link
-            to="/retailers"
-            className="mt-6 block w-full rounded-lg bg-[#27509B] px-4 py-3 text-center text-sm font-bold text-white transition hover:bg-[#00205B]"
-          >
-            Voir les revendeurs
+          <Link to="/retailers">
+            <button className="mt-5 w-full rounded-lg bg-[#27509B] hover:bg-[#1a3d7a] px-4 py-3 text-sm font-bold text-white">
+              Voir les revendeurs
+            </button>
           </Link>
 
           <button
             onClick={onClose}
-            className="mt-3 w-full rounded-lg border border-[#27509B] text-[#27509B] bg-white px-4 py-3 text-sm font-bold text-neutral-800 transition hover:bg-neutral-100"
+            className="mt-3 w-full rounded-lg border border-[#27509B] bg-white px-4 py-3 text-sm font-bold text-neutral-800 transition hover:bg-neutral-100"
           >
             Plus tard
           </button>
@@ -79,7 +78,7 @@ export default function RecommendationModal({
 
 function Chip({ children }: { children: React.ReactNode }) {
   return (
-    <span className="rounded-full bg-neutral-100 px-3 py-2 text-xs font-medium">
+    <span className="rounded-full bg-[#D4E7FA] px-3 py-2 text-xs font-medium text-[#27509B]">
       {children}
     </span>
   );

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
+import { Plus } from "lucide-react";
 import StravaConnectButton from "../components/StravaConnectButton";
 import { useActivities } from "../hooks/useActivities";
 import { useAuth } from "../contexts/AuthContext";
@@ -28,7 +29,7 @@ export default function FindTire() {
               <div className="mt-2 flex gap-2">
                 <Chip>Durabilité</Chip>
                 <Chip>Grip</Chip>
-                <Chip>+</Chip>
+                <Chip><Plus size={14}/></Chip>
               </div>
             </div>
 
@@ -92,7 +93,7 @@ export default function FindTire() {
           </div>
 
           <Link to="/retailers">
-            <button className="mt-5 w-full rounded-lg bg-[#27509B] px-4 py-3 text-sm font-bold text-white">
+            <button className="mt-5 w-full rounded-lg bg-[#27509B] hover:bg-[#1a3d7a] px-4 py-3 text-sm font-bold text-white">
               Voir les revendeurs
             </button>
           </Link>
@@ -115,7 +116,7 @@ function Field({ label, value }: { label: string; value: string }) {
 
 function Chip({ children }: { children: React.ReactNode }) {
   return (
-    <span className="rounded-full bg-neutral-100 px-3 py-2 text-xs">
+    <span className="rounded-full bg-[#D4E7FA] px-3 py-2 text-xs font-medium text-[#27509B]">
       {children}
     </span>
   );

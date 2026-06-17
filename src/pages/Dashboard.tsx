@@ -101,7 +101,7 @@ export default function Dashboard() {
           <p className="mb-4 text-sm text-neutral-600">
             La gestion des pneus sera disponible prochainement.
           </p>
-          <div className="space-y-4 opacity-60">
+          <div className="space-y-4">
             <TireCard name="Michelin Power Gravel" health={72} />
           </div>
         </section>
