@@ -1,16 +1,17 @@
 import { Home, Search, CircleGauge, ChartLine, BookOpen } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function BottomNav() {
+  const { isAuthenticated } = useAuth();
   const baseClass =
     "flex flex-col items-center gap-1 text-[11px]";
   const activeClass = "font-bold text-[#27509B]";
-  const isConnected = "true";
 
   return (
     <nav className="flex h-16 shrink-0 items-center justify-around border-t border-neutral-300 bg-white">
       <NavLink
-        to={isConnected ? "/dashboard" : "/"}
+        to={isAuthenticated ? "/dashboard" : "/"}
         className={({ isActive }) =>
           `${baseClass} ${isActive ? activeClass : ""}`
         }

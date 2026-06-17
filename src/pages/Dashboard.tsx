@@ -1,39 +1,67 @@
-import Header from "../components/Header";
-import TireCard from "../components/TireCard";
-import { Flame } from "lucide-react";
 import { Link } from "react-router-dom";
+import Header from "../components/Header";
+import ActivityCard from "../components/ActivityCard";
+import TireCard from "../components/TireCard";
+import StravaConnectButton from "../components/StravaConnectButton";
+import { useActivities } from "../hooks/useActivities";
+import { getUserDisplayName, sumKilometers } from "../lib/format";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function Dashboard() {
+  const { user } = useAuth();
+  const { activities, isLoading, error } = useActivities();
+  const recentActivities = activities.slice(0, 2);
+  const totalKm = sumKilometers(activities);
+  const hasStravaActivities = activities.some(
+    (activity) => activity.source === "STRAVA",
+  );
+
   return (
     <div>
       <Header title="MICHELIN Ride Companion" />
 
       <main className="p-6 pb-24">
-        <h1 className="mb-8 text-3xl font-bold">Bonjour Daniel</h1>
+        <h1 className="mb-8 text-3xl font-bold">
+          Bonjour {getUserDisplayName(user)}
+        </h1>
 
         <div className="grid grid-cols-2 gap-4">
           <div className="rounded-lg border border-neutral-300 bg-[#D4E7FA] p-4">
-            <strong className="block text-2xl">300</strong>
+            <strong className="block text-2xl">
+              {isLoading ? "…" : Math.round(totalKm)}
+            </strong>
             <span className="mt-2 block text-sm text-neutral-700">
               km parcourus
             </span>
           </div>
 
           <div className="rounded-lg border border-neutral-300 bg-[#D4E7FA] p-4">
-            <strong className="block text-2xl">10</strong>
+            <strong className="block text-2xl">
+              {isLoading ? "…" : activities.length}
+            </strong>
             <span className="mt-2 block text-sm text-neutral-700">
-              semaines consécutives
+              activités enregistrées
             </span>
           </div>
         </div>
 
+        {!hasStravaActivities && !isLoading && (
+          <section className="mt-6 rounded-xl border border-neutral-300 p-5">
+            <h2 className="text-lg font-bold">Connecter Strava</h2>
+            <p className="mt-2 text-sm text-neutral-600">
+              Importez vos sorties pour alimenter vos statistiques.
+            </p>
+            <div className="mt-4">
+              <StravaConnectButton />
+            </div>
+          </section>
+        )}
+
         <section className="mt-8 rounded-xl border border-neutral-300 p-5">
           <h2 className="mb-4 text-2xl font-bold">Alertes</h2>
-
-          <div className="rounded-xl border border-neutral-300 p-5">
-            <strong className="text-xl">Michelin Power Gravel</strong>
-            <p className="mt-3 text-sm">Crevaison lente</p>
-          </div>
+          <p className="text-sm text-neutral-600">
+            Les alertes pneu seront disponibles prochainement.
+          </p>
         </section>
 
         <section className="mt-8 rounded-xl border border-neutral-300 p-5">
@@ -48,43 +76,38 @@ export default function Dashboard() {
             </Link>
           </div>
 
-          <ActivityCard type="Route" />
-          <ActivityCard type="Gravel" />
+          {isLoading && (
+            <p className="text-sm text-neutral-600">Chargement...</p>
+          )}
+
+          {error && (
+            <p className="text-sm text-red-600" role="alert">
+              {error}
+            </p>
+          )}
+
+          {!isLoading && !error && recentActivities.length === 0 && (
+            <p className="text-sm text-neutral-600">
+              Aucune activité pour le moment. Connectez Strava ou ajoutez une
+              sortie depuis la page Activités.
+            </p>
+          )}
+
+          {recentActivities.map((activity) => (
+            <ActivityCard key={activity.id} activity={activity} />
+          ))}
         </section>
 
         <section className="mt-8 rounded-xl border border-neutral-300 p-5">
           <h2 className="mb-4 text-2xl font-bold">Pneus actifs</h2>
-
-          <div className="space-y-4">
-            <TireCard name="Michelin Power Gravel" health={72} />
+          <p className="mb-4 text-sm text-neutral-600">
+            La gestion des pneus sera disponible prochainement.
+          </p>
+          <div className="space-y-4 opacity-60">
             <TireCard name="Michelin Power Gravel" health={72} />
           </div>
         </section>
       </main>
-    </div>
-  );
-}
-
-function ActivityCard({ type }: { type: string }) {
-  return (
-    <div className="mb-4 flex items-center justify-between rounded-xl border border-neutral-300 p-5 last:mb-0">
-      <div>
-        <div className="flex items-center gap-2">
-          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-orange-600 text-white">
-            <Flame size={13} />
-          </span>
-          <strong className="text-xl">Annecy</strong>
-        </div>
-
-        <p className="mt-4 text-sm">80km</p>
-      </div>
-
-      <div className="text-right">
-        <span className="rounded-full bg-neutral-100 px-4 py-2 text-xs">
-          {type}
-        </span>
-        <p className="mt-4 text-sm">15/06/26</p>
-      </div>
     </div>
   );
 }

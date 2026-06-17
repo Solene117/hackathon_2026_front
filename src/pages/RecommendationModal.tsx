@@ -58,10 +58,11 @@ export default function RecommendationModal({
             <Chip>Résistance renforcée</Chip>
           </div>
 
-          <Link to="/retailers">
-            <button className="mt-5 w-full rounded-lg bg-[#27509B] hover:bg-[#1a3d7a] px-4 py-3 text-sm font-bold text-white">
-              Voir les revendeurs
-            </button>
+          <Link
+            to="/retailers"
+            className="mt-6 block w-full rounded-lg bg-[#27509B] px-4 py-3 text-center text-sm font-bold text-white transition hover:bg-[#00205B]"
+          >
+            Voir les revendeurs
           </Link>
 
           <button

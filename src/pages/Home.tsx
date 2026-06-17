@@ -28,9 +28,11 @@ export default function Home() {
               </button>
             </Link>
 
-            <button className="w-full rounded-lg bg-[#27509B] px-4 py-3 text-sm font-bold text-white">
-              Connecter Strava / Garmin
-            </button>
+            <Link to="/login">
+              <button className="w-full rounded-lg border border-[#27509B] bg-white px-4 py-3 text-sm font-bold text-[#27509B]">
+                Connecter Strava
+              </button>
+            </Link>
           </div>
         </section>
 
