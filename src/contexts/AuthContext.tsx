@@ -17,6 +17,7 @@ type AuthContextValue = {
   isLoading: boolean;
   login: (mail: string, password: string) => Promise<void>;
   register: (payload: RegisterPayload) => Promise<void>;
+  refreshUser: () => Promise<void>;
   logout: () => void;
 };
 
@@ -50,6 +51,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(currentUser);
   }, []);
 
+  const refreshUser = useCallback(async () => {
+    if (!getToken()) return;
+
+    try {
+      setUser(await authApi.fetchCurrentUser());
+    } catch {
+      /* on garde l'utilisateur courant si le rafraîchissement échoue */
+    }
+  }, []);
+
   const logout = useCallback(() => {
     authApi.logout();
     setUser(null);
@@ -62,9 +73,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isLoading,
       login,
       register,
+      refreshUser,
       logout,
     }),
-    [user, isLoading, login, register, logout],
+    [user, isLoading, login, register, refreshUser, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -1,4 +1,4 @@
-import { UserCircle, X, Settings, Gift, LogOut } from "lucide-react";
+import { UserCircle, X, Settings, Gift, LogOut, Award } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.svg";
@@ -60,15 +60,32 @@ export default function Header({ title }: HeaderProps) {
               </div>
             ) : (
               <div className="mt-6 space-y-3">
-                <button className="flex w-full items-center gap-3 rounded-lg bg-neutral-100 px-4 py-3 text-left font-semibold hover:bg-[#D4E7FA]">
-                  <Settings size={20} />
-                  Paramètres
-                </button>
+                <Link
+                  to="/recompenses"
+                  onClick={() => setIsProfileOpen(false)}
+                  className="flex w-full items-center gap-3 rounded-lg bg-neutral-100 px-4 py-3 text-left font-semibold hover:bg-[#D4E7FA]"
+                >
+                  <Award size={20} />
+                  Récompenses
+                </Link>
 
-                <button className="flex w-full items-center gap-3 rounded-lg bg-neutral-100 px-4 py-3 text-left font-semibold hover:bg-[#D4E7FA]">
+                <Link
+                  to="/parrainage"
+                  onClick={() => setIsProfileOpen(false)}
+                  className="flex w-full items-center gap-3 rounded-lg bg-neutral-100 px-4 py-3 text-left font-semibold hover:bg-[#D4E7FA]"
+                >
                   <Gift size={20} />
                   Parrainage
-                </button>
+                </Link>
+
+                <Link
+                  to="/settings"
+                  onClick={() => setIsProfileOpen(false)}
+                  className="flex w-full items-center gap-3 rounded-lg bg-neutral-100 px-4 py-3 text-left font-semibold hover:bg-[#D4E7FA]"
+                >
+                  <Settings size={20} />
+                  Paramètres
+                </Link>
 
                 <button
                   onClick={logout}

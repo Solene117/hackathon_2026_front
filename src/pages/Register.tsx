@@ -1,15 +1,17 @@
 import { useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import Header from "../components/Header";
 import { getAuthErrorMessage, useAuth } from "../contexts/AuthContext";
 
 export default function Register() {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
   const { register, isAuthenticated, isLoading } = useAuth();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [mail, setMail] = useState("");
   const [password, setPassword] = useState("");
+  const [referralCode, setReferralCode] = useState(params.get("ref") ?? "");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -28,6 +30,7 @@ export default function Register() {
         lastName: lastName || undefined,
         mail,
         password,
+        referralCode: referralCode.trim() || undefined,
       });
       localStorage.setItem("isConnected", "true");
       navigate("/dashboard");
@@ -88,6 +91,20 @@ export default function Register() {
               autoComplete="new-password"
               className="w-full rounded-lg border border-neutral-300 bg-[#D4E7FA] px-3 py-3 text-sm"
             />
+
+            <div>
+              <input
+                type="text"
+                placeholder="Code de parrainage (optionnel)"
+                value={referralCode}
+                onChange={(e) => setReferralCode(e.target.value)}
+                className="w-full rounded-lg border border-neutral-300 bg-[#D4E7FA] px-3 py-3 text-sm"
+              />
+              <p className="mt-1 text-xs text-neutral-500">
+                Un ami vous a invité ? Saisissez son code pour démarrer avec des
+                avantages.
+              </p>
+            </div>
 
             {error && (
               <p className="text-sm text-red-600" role="alert">

@@ -1,16 +1,22 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import ActivityCard from "../components/ActivityCard";
 import TireCard from "../components/TireCard";
 import AlertsWidget from "../components/AlertsWidget";
 import StravaConnectButton from "../components/StravaConnectButton";
+import LoyaltyCard from "../components/LoyaltyCard";
 import { useActivities } from "../hooks/useActivities";
 import { getUserDisplayName, sumKilometers } from "../lib/format";
 import { useAuth } from "../contexts/AuthContext";
 
 export default function Dashboard() {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const { activities, isLoading, error } = useActivities();
+
+  useEffect(() => {
+    void refreshUser();
+  }, [refreshUser]);
   const recentActivities = activities.slice(0, 2);
   const totalKm = sumKilometers(activities);
   const hasStravaActivities = activities.some(
@@ -44,6 +50,10 @@ export default function Dashboard() {
               activités enregistrées
             </span>
           </div>
+        </div>
+
+        <div className="mt-4">
+          <LoyaltyCard variant="compact" />
         </div>
 
         {!hasStravaActivities && !isLoading && (
