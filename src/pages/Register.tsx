@@ -29,6 +29,7 @@ export default function Register() {
         mail,
         password,
       });
+      localStorage.setItem("isConnected", "true");
       navigate("/dashboard");
     } catch (err) {
       setError(getAuthErrorMessage(err));

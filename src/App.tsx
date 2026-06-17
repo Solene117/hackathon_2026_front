@@ -14,6 +14,7 @@ import RecommendationModal from "./pages/RecommendationModal";
 import Activities from "./pages/Activities";
 import Retailers from "./pages/Retailers";
 import Settings from "./pages/Settings";
+import Communaute from "./pages/Communaute";
 
 function HomeRoute() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -95,6 +96,15 @@ function AppRoutes() {
           element={
             <RequireAuth>
               <TireTracking />
+            </RequireAuth>
+          }
+        />
+
+        <Route
+          path="/communaute"
+          element={
+            <RequireAuth>
+              <Communaute />
             </RequireAuth>
           }
         />
