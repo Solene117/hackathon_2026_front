@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import ActivityCard from "../components/ActivityCard";
 import TireCard from "../components/TireCard";
+import AlertsWidget from "../components/AlertsWidget";
 import StravaConnectButton from "../components/StravaConnectButton";
 import { useActivities } from "../hooks/useActivities";
 import { getUserDisplayName, sumKilometers } from "../lib/format";
@@ -57,12 +58,9 @@ export default function Dashboard() {
           </section>
         )}
 
-        <section className="mt-8 rounded-xl border border-neutral-300 p-5">
-          <h2 className="mb-4 text-2xl font-bold">Alertes</h2>
-          <p className="text-sm text-neutral-600">
-            Les alertes pneu seront disponibles prochainement.
-          </p>
-        </section>
+        <div className="mt-8">
+          <AlertsWidget />
+        </div>
 
         <section className="mt-8 rounded-xl border border-neutral-300 p-5">
           <div className="mb-4 flex items-center justify-between">
