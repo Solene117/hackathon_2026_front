@@ -12,6 +12,7 @@ import MyTires from "./pages/MyTires";
 import TireTracking from "./pages/TireTracking";
 import RecommendationModal from "./pages/RecommendationModal";
 import Activities from "./pages/Activities";
+import ActivityPage from "./pages/ActivityPage";
 import Retailers from "./pages/Retailers";
 import Settings from "./pages/Settings";
 import Communaute from "./pages/Communaute";
@@ -115,6 +116,15 @@ function AppRoutes() {
         element={
           <RequireAuth>
             <RecommendationPage />
+          </RequireAuth>
+        }
+      />
+
+      <Route
+        path="/activites/:id"
+        element={
+          <RequireAuth>
+            <ActivityPage />
           </RequireAuth>
         }
       />

@@ -2,15 +2,38 @@ import type { TerrainType } from "../types/activity";
 import type { User } from "../types/user";
 
 const TERRAIN_LABELS: Record<TerrainType, string> = {
-  ROAD: "Route",
-  TRAIL: "VTT",
-  GRAVEL: "Gravel",
+  ASPHALT: "Asphalte",
+  HARD_PACKED: "Terrain dur compacté",
   MIXED: "Mixte",
+  GRAVEL: "Gravier",
+  ROCKY: "Rocheux",
+  MUD: "Boueux",
+  SOFT: "Meuble",
+  SAND: "Sableux",
+  WET: "Humide",
   UNKNOWN: "Inconnu",
 };
 
 export function formatTerrain(terrain: TerrainType): string {
   return TERRAIN_LABELS[terrain];
+}
+
+export function formatDuration(seconds: number | null): string {
+  if (seconds == null) return "—";
+
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+
+  if (hours > 0) {
+    return `${hours}h ${String(minutes).padStart(2, "0")}min`;
+  }
+
+  if (minutes > 0) {
+    return `${minutes}min ${String(remainingSeconds).padStart(2, "0")}s`;
+  }
+
+  return `${remainingSeconds}s`;
 }
 
 export function formatKilometers(km: number | null): string {

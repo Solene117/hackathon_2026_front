@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Plus, RefreshCw } from "lucide-react";
 import Header from "../components/Header";
 import ActivityCard from "../components/ActivityCard";
@@ -7,25 +8,25 @@ import { useActivities } from "../hooks/useActivities";
 import { getApiErrorMessage } from "../lib/errors";
 
 export default function Activities() {
+  const navigate = useNavigate();
   const { activities, isLoading, error, refresh } = useActivities();
-  const [actionError, setActionError] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   async function handleRefresh() {
-    setActionError(null);
     setIsRefreshing(true);
     await refresh();
     setIsRefreshing(false);
   }
 
-  async function handleStartActivity() {
+  async function handleNewActivity() {
     setActionError(null);
     setIsStarting(true);
 
     try {
-      await startActivity({ name: "Sortie vélo" });
-      await refresh();
+      const activity = await startActivity({ name: "Sortie vélo" });
+      navigate(`/activites/${activity.id}`);
     } catch (err) {
       setActionError(getApiErrorMessage(err));
     } finally {
@@ -43,12 +44,12 @@ export default function Activities() {
         <div className="mb-5 grid grid-cols-2 gap-3">
           <button
             type="button"
-            onClick={() => void handleStartActivity()}
+            onClick={() => void handleNewActivity()}
             disabled={isStarting}
             className="flex items-center justify-center gap-2 rounded-xl bg-[#27509B] px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#00205B] disabled:opacity-60"
           >
             <Plus size={18} />
-            {isStarting ? "Démarrage..." : "Nouvelle sortie"}
+            {isStarting ? "Création..." : "Nouvelle sortie"}
           </button>
 
           <button
