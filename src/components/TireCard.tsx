@@ -19,15 +19,15 @@ export default function TireCard({
       <div className="flex items-start justify-between">
         <strong className="text-xl">{name}</strong>
 
-          <span
-            className={`rounded-full px-3 py-1 text-xs font-medium ${
-              status === "Actif"
-                ? "bg-green-100 text-green-700"
-                : "bg-red-100 text-red-700"
-            }`}
-          >
-            {status}
-          </span>
+        <span
+          className={`rounded-full px-3 py-1 text-xs font-medium ${
+            status === "Actif"
+              ? "bg-green-100 text-green-700"
+              : "bg-red-100 text-red-700"
+          }`}
+        >
+          {status}
+        </span>
 
         <div className="mt-4 flex justify-between">
           <span>État global</span>
