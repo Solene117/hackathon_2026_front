@@ -1,8 +1,12 @@
 import { useState } from "react";
+import { useParams } from "react-router-dom";
+import AlertsWidget from "../components/AlertsWidget";
 import Header from "../components/Header";
 import RecommendationModal from "./RecommendationModal";
 
 export default function TireTracking() {
+  const { tireId: tireIdParam } = useParams<{ tireId: string }>();
+  const tireId = tireIdParam ? Number(tireIdParam) : undefined;
   const [showRecommendation, setShowRecommendation] = useState(false);
 
   return (
@@ -63,6 +67,10 @@ export default function TireTracking() {
               Voir recommandation
             </button>
           </section>
+
+          {tireId !== undefined && !Number.isNaN(tireId) && (
+            <AlertsWidget tireId={tireId} />
+          )}
 
           <section className="rounded-xl border border-neutral-300 p-5">
             <h2 className="text-2xl font-bold">
