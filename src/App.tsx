@@ -92,7 +92,7 @@ function AppRoutes() {
         />
 
         <Route
-          path="/suivi-pneu"
+          path="/suivi-pneu/:tireId"
           element={
             <RequireAuth>
               <TireTracking />

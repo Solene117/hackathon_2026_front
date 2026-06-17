@@ -1,8 +1,11 @@
 import { Plus } from "lucide-react";
 import Header from "../components/Header";
 import TireCard from "../components/TireCard";
+import { useUserTires } from "../hooks/useUserTires";
 
 export default function MyTires() {
+  const { tires, isLoading, error } = useUserTires();
+
   return (
     <div>
       <Header title="MICHELIN Ride Companion" />
@@ -18,10 +21,32 @@ export default function MyTires() {
           Ajouter un pneu
         </button>
 
+        {isLoading && (
+          <p className="text-sm text-neutral-600">Chargement...</p>
+        )}
+
+        {error && (
+          <p className="text-sm text-red-600" role="alert">
+            {error}
+          </p>
+        )}
+
+        {!isLoading && !error && tires.length === 0 && (
+          <p className="text-sm text-neutral-600">
+            Aucun pneu enregistré pour le moment.
+          </p>
+        )}
+
         <div className="space-y-4">
-          <TireCard name="Michelin Power Gravel" status="Actif" health={72} />
-          <TireCard name="Michelin Power Gravel" status="Actif" health={72} />
-          <TireCard name="Michelin Power Gravel" status="Inactif" health={72} />
+          {tires.map((tire) => (
+            <TireCard
+              key={tire.id}
+              userTireId={tire.id}
+              name={tire.model}
+              status={tire.isActive ? "Actif" : "Inactif"}
+              health={tire.health}
+            />
+          ))}
         </div>
       </main>
     </div>
