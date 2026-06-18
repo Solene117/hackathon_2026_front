@@ -130,11 +130,11 @@ export function TireHealthSection({
 
   return (
     <section className="rounded-xl border border-neutral-300 p-5">
-      <h2 className="text-2xl font-bold">Usure estimée</h2>
+      <h2 className="text-2xl font-bold">Durée de vie restante</h2>
 
       <div className="mt-4 flex items-center justify-between">
         <strong className="text-3xl font-bold text-[#27509B]">
-          {isLoading ? "..." : formatWearScore(healthScore)}
+          {isLoading ? "..." : formatRemainingLifeScore(healthScore)}
         </strong>
 
         <span className="rounded-full bg-[#D4E7FA] px-3 py-2 text-xs font-medium text-[#27509B]">
@@ -189,7 +189,7 @@ function formatHealthStatus(status: UserTireWear["healthStatus"]): string {
   return HEALTH_STATUS_LABELS[status] ?? status;
 }
 
-function formatWearScore(score: number | null): string {
+function formatRemainingLifeScore(score: number | null): string {
   if (score == null) return "—";
   return `${score}%`;
 }
