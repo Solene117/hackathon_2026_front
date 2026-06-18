@@ -10,6 +10,7 @@ import {
   TireUsageSection,
 } from "../../components/tires/TireTrackingSections";
 import { useUserTireInfo } from "../../hooks/useUserTireInfo";
+import { useUserTireWear } from "../../hooks/useUserTireWear";
 
 export default function TireTrackingPage() {
   const { tireId: tireIdParam } = useParams<{ tireId: string }>();
@@ -21,6 +22,11 @@ export default function TireTrackingPage() {
     isLoading: isTireInfoLoading,
     error: tireInfoError,
   } = useUserTireInfo(validTireId);
+  const {
+    tireWear,
+    isLoading: isTireWearLoading,
+    error: tireWearError,
+  } = useUserTireWear(validTireId);
   const [showRecommendation, setShowRecommendation] = useState(false);
   const [showTireDetail, setShowTireDetail] = useState(false);
 
@@ -38,11 +44,19 @@ export default function TireTrackingPage() {
       )}
 
       <PageShell title="Suivi du pneu" mainClassName="space-y-5 p-5 pb-24">
-        <TireCurrentSection smartTire={tireInfo?.smartTire === true} />
+        <TireCurrentSection
+          model={tireWear?.model}
+          position={tireWear?.position}
+          smartTire={tireInfo?.smartTire === true}
+          isLoading={isTireWearLoading}
+          error={tireWearError}
+        />
 
         <TireHealthSection
-          health={42}
-          label="Bon état"
+          healthScore={tireWear?.healthScore ?? null}
+          healthStatus={tireWear?.healthStatus ?? null}
+          isLoading={isTireWearLoading}
+          error={tireWearError}
           onShowRecommendation={() => setShowRecommendation(true)}
         />
 

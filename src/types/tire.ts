@@ -68,3 +68,10 @@ export type UserTireInfo = {
   lastPressureBar: number | null;
   smartTire: boolean | null;
 };
+
+export type UserTireWear = {
+  model: string;
+  position: string | null;
+  healthScore: number | null;
+  healthStatus: "good" | "warning" | "replace_soon" | string | null;
+};
