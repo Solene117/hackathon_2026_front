@@ -12,7 +12,7 @@ export default function DashboardPage() {
   const { user } = useAuth();
   const { activities, isLoading, error } = useActivities();
 
-  const recentActivities = activities.slice(0, 2);
+  const recentActivities = activities.slice(0, 6);
   const totalKm = sumKilometers(activities);
   const isStravaLinked = user?.stravaLinked === true;
 

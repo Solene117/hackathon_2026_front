@@ -1,7 +1,9 @@
 import { create } from "zustand";
 import { checkAlert, fetchUserAlerts } from "../api/alerts";
+import { resolveAlertUserTireId } from "../lib/alert-utils";
 import { getApiErrorMessage } from "../lib/errors";
 import type { Alert } from "../types/alert";
+import { useUserTiresStore } from "./userTiresStore";
 
 type AlertsState = {
   alerts: Alert[];
@@ -28,7 +30,13 @@ export const useAlertsStore = create<AlertsState>((set, get) => ({
     set({ isLoading: true, error: null });
 
     try {
-      const alerts = await fetchUserAlerts();
+      const rawAlerts = await fetchUserAlerts();
+      const tires = useUserTiresStore.getState().tires;
+      const alerts = rawAlerts.map((alert) => ({
+        ...alert,
+        userTireId:
+          resolveAlertUserTireId(alert, tires) ?? alert.userTireId,
+      }));
       set({ alerts, isLoading: false });
     } catch (err) {
       set({ error: getApiErrorMessage(err), isLoading: false });
@@ -40,9 +48,15 @@ export const useAlertsStore = create<AlertsState>((set, get) => ({
 
     try {
       const updated = await checkAlert(alertId);
+      const tires = useUserTiresStore.getState().tires;
+      const enriched: Alert = {
+        ...updated,
+        userTireId:
+          resolveAlertUserTireId(updated, tires) ?? updated.userTireId,
+      };
       set((state) => ({
         alerts: state.alerts.map((alert) =>
-          alert.id === alertId ? updated : alert,
+          alert.id === alertId ? enriched : alert,
         ),
         checkingId: null,
       }));

@@ -1,5 +1,6 @@
-import { Link } from "react-router-dom";
 import ActivityCard from "../activities/ActivityCard";
+import HorizontalSlider from "../ui/HorizontalSlider";
+import SectionBlock from "../ui/SectionBlock";
 import EmptyState from "../ui/EmptyState";
 import ErrorAlert from "../ui/ErrorAlert";
 import LoadingMessage from "../ui/LoadingMessage";
@@ -17,29 +18,35 @@ export default function RecentActivitiesSection({
   error,
 }: RecentActivitiesSectionProps) {
   return (
-    <section className="rounded-xl border border-neutral-300 p-5">
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Activités récentes</h2>
-
-        <Link
-          to="/activites"
-          className="text-sm font-semibold text-neutral-600 underline"
-        >
-          Voir plus
-        </Link>
-      </div>
-
+    <SectionBlock
+      title="Activités récentes"
+      subtitle="Vos dernières sorties en un coup d'œil"
+      action={{ label: "Voir tout", to: "/activites" }}
+    >
       {isLoading && <LoadingMessage />}
 
-      {error && <ErrorAlert message={error} />}
+      {error && <ErrorAlert message={error} className="mb-4" />}
 
       {!isLoading && !error && activities.length === 0 && (
-        <EmptyState message="Aucune activité pour le moment. Connectez Strava ou ajoutez une sortie depuis la page Activités." />
+        <EmptyState message="Aucune activité pour le moment. Connectez Strava ou démarrez une nouvelle sortie." />
       )}
 
-      {activities.map((activity) => (
-        <ActivityCard key={activity.id} activity={activity} />
-      ))}
-    </section>
+      {!isLoading && !error && activities.length > 0 && (
+        <HorizontalSlider
+          showEdgeFade
+          showDots={activities.length > 1}
+          fadeFromClassName="from-white"
+          trackClassName="-mx-1 px-1"
+        >
+          {activities.map((activity) => (
+            <ActivityCard
+              key={activity.id}
+              activity={activity}
+              variant="slide"
+            />
+          ))}
+        </HorizontalSlider>
+      )}
+    </SectionBlock>
   );
 }

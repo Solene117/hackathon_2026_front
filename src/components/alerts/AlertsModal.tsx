@@ -1,10 +1,13 @@
 import { AlertTriangle, Check, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ModalPortal from "../ui/ModalPortal";
+import { resolveAlertUserTireId } from "../../lib/alert-utils";
 import {
   selectUncheckedAlerts,
   useAlertsStore,
 } from "../../stores/alertsStore";
+import { useUserTiresStore } from "../../stores/userTiresStore";
+import type { Alert } from "../../types/alert";
 
 export default function AlertsModal() {
   const navigate = useNavigate();
@@ -17,13 +20,21 @@ export default function AlertsModal() {
     closeModal,
     markAsRead,
   } = useAlertsStore();
+  const tires = useUserTiresStore((state) => state.tires);
 
   if (!isModalOpen) return null;
 
   const uncheckedAlerts = selectUncheckedAlerts(alerts);
 
-  async function handleAlertClick(alertId: number, userTireId: number) {
-    await markAsRead(alertId);
+  async function handleAlertClick(alert: Alert) {
+    const userTireId = resolveAlertUserTireId(alert, tires);
+    if (userTireId == null) {
+      closeModal();
+      navigate("/mes-pneus");
+      return;
+    }
+
+    await markAsRead(alert.id);
     closeModal();
     navigate(`/suivi-pneu/${userTireId}`);
   }
@@ -94,7 +105,7 @@ export default function AlertsModal() {
                     <div className="flex items-start gap-3">
                       <button
                         type="button"
-                        onClick={() => void handleAlertClick(alert.id, alert.userTireId)}
+                        onClick={() => void handleAlertClick(alert)}
                         className="group flex min-w-0 flex-1 items-start gap-3 text-left"
                       >
                         <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-amber-400/20">
