@@ -1,23 +1,32 @@
-import { UserCircle, X, Settings, Gift, LogOut, Award } from "lucide-react";
+import { UserCircle, X, Settings, Gift, LogOut, Award, ArrowLeft} from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.svg";
 import { useAuth } from "../contexts/AuthContext";
 
 type HeaderProps = {
   title?: string;
+  showBackButton?: boolean;
 };
 
-export default function Header({ title }: HeaderProps) {
+export default function Header({ title, showBackButton = false }: HeaderProps) {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <>
       <header className="flex h-14 items-center justify-between border-b border-neutral-200 bg-[#27509B] px-4">
         <div className="flex items-center gap-3">
           <img src={logo} alt="Michelin" className="h-8 object-contain" />
-
+          {showBackButton && (
+            <button
+              onClick={() => navigate(-1)}
+              className="text-white"
+            >
+              <ArrowLeft size={24} />
+            </button>
+          )}
           {title && <span className="font-semibold text-white">{title}</span>}
         </div>
 
