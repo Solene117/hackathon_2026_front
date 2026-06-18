@@ -1,7 +1,7 @@
 import { Calendar, MapPin, Users } from "lucide-react";
 
 export type EventItem = {
-  id: number;
+  id: string;
   title: string;
   type: string;
   date: string;
@@ -12,9 +12,15 @@ export type EventItem = {
 
 type EventCardProps = {
   event: EventItem;
+  isRegistered?: boolean;
+  onParticipate?: () => void;
 };
 
-export default function EventCard({ event }: EventCardProps) {
+export default function EventCard({
+  event,
+  isRegistered = false,
+  onParticipate,
+}: EventCardProps) {
   return (
     <article className="overflow-hidden rounded-2xl border border-neutral-300 bg-white shadow-sm">
       <div className="h-40 bg-neutral-100">
@@ -48,6 +54,18 @@ export default function EventCard({ event }: EventCardProps) {
             <span>{event.participants} participants</span>
           </div>
         </div>
+
+        <button
+          disabled={isRegistered}
+          onClick={onParticipate}
+          className={`mt-5 w-full rounded-lg px-4 py-3 font-bold ${
+            isRegistered
+              ? "bg-neutral-200 text-neutral-500"
+              : "bg-[#27509B] text-white hover:bg-[#1a3d7a]"
+          }`}
+        >
+          {isRegistered ? "Inscrit" : "Participer"}
+        </button>
       </div>
     </article>
   );
