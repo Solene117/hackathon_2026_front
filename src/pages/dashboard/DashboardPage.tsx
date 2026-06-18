@@ -3,12 +3,12 @@ import PageShell from "../../components/layout/PageShell";
 import ActiveTiresSection from "../../components/dashboard/ActiveTiresSection";
 import DashboardStatsGrid from "../../components/dashboard/DashboardStatsGrid";
 import RecentActivitiesSection from "../../components/dashboard/RecentActivitiesSection";
-import StravaConnectPrompt from "../../components/dashboard/StravaConnectPrompt";
 import AlertsWidget from "../../components/tires/AlertsWidget";
 import LoyaltyCard from "../../components/loyalty/LoyaltyCard";
 import { useActivities } from "../../hooks/useActivities";
 import { getUserDisplayName, sumKilometers } from "../../lib/format";
 import { useAuth } from "../../contexts/AuthContext";
+import StravaIntegrationSection from "../../components/settings/StravaIntegrationSection";
 
 export default function DashboardPage() {
   const { user, refreshUser } = useAuth();
@@ -20,9 +20,7 @@ export default function DashboardPage() {
 
   const recentActivities = activities.slice(0, 2);
   const totalKm = sumKilometers(activities);
-  const hasStravaActivities = activities.some(
-    (activity) => activity.source === "STRAVA",
-  );
+  const isStravaLinked = user?.stravaLinked === true;
 
   return (
     <PageShell title="MICHELIN Ride Companion" mainClassName="p-6 pb-24">
@@ -40,12 +38,6 @@ export default function DashboardPage() {
         <LoyaltyCard variant="compact" />
       </div>
 
-      {!hasStravaActivities && !isLoading && (
-        <div className="mt-6">
-          <StravaConnectPrompt />
-        </div>
-      )}
-
       <div className="mt-8">
         <AlertsWidget />
       </div>
@@ -61,6 +53,12 @@ export default function DashboardPage() {
       <div className="mt-8">
         <ActiveTiresSection />
       </div>
+
+      {!isStravaLinked && (
+        <div className="mt-6">
+          <StravaIntegrationSection />
+        </div>
+      )}
     </PageShell>
   );
 }

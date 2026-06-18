@@ -12,6 +12,7 @@ export type User = {
   points: number;
   currentTier: string;
   referralCode: string | null;
+  stravaLinked: boolean;
 };
 
 export type LoginPayload = {
