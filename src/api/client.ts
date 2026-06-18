@@ -10,6 +10,10 @@ export class ApiError extends Error {
   }
 }
 
+export type ApiOptions = RequestInit & {
+  timeoutMs?: number;
+};
+
 export function getToken(): string | null {
   return localStorage.getItem(TOKEN_KEY);
 }
@@ -33,27 +37,63 @@ async function parseErrorMessage(response: Response): Promise<string> {
   return response.statusText || "Une erreur est survenue";
 }
 
-export async function api<T>(path: string, options: RequestInit = {}): Promise<T> {
+export async function api<T>(
+  path: string,
+  options: ApiOptions = {},
+): Promise<T> {
+  const { timeoutMs, signal: externalSignal, ...fetchOptions } = options;
   const token = getToken();
-  const headers = new Headers(options.headers);
+  const headers = new Headers(fetchOptions.headers);
   const baseUrl = import.meta.env.VITE_API_BASE_URL ?? "";
 
-  if (!headers.has("Content-Type") && options.body) {
+  if (!headers.has("Content-Type") && fetchOptions.body) {
     headers.set("Content-Type", "application/json");
   }
   if (token) {
     headers.set("Authorization", `Bearer ${token}`);
   }
 
-  const response = await fetch(`${baseUrl}${path}`, { ...options, headers });
+  const controller = new AbortController();
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
-  if (!response.ok) {
-    throw new ApiError(response.status, await parseErrorMessage(response));
+  const abort = () => controller.abort();
+
+  if (timeoutMs) {
+    timeoutId = setTimeout(abort, timeoutMs);
   }
 
-  if (response.status === 204) {
-    return undefined as T;
+  if (externalSignal) {
+    externalSignal.addEventListener("abort", abort);
   }
 
-  return response.json() as Promise<T>;
+  try {
+    const response = await fetch(`${baseUrl}${path}`, {
+      ...fetchOptions,
+      headers,
+      signal: controller.signal,
+    });
+
+    if (!response.ok) {
+      throw new ApiError(response.status, await parseErrorMessage(response));
+    }
+
+    if (response.status === 204) {
+      return undefined as T;
+    }
+
+    return response.json() as Promise<T>;
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw new ApiError(
+        408,
+        "L'analyse IA a pris trop de temps. Réessayez dans quelques instants.",
+      );
+    }
+
+    throw error;
+  } finally {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+  }
 }

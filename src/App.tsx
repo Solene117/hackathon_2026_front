@@ -47,7 +47,14 @@ function AppRoutes() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        <Route path="/trouver-pneu" element={<FindTire />} />
+        <Route
+          path="/trouver-pneu"
+          element={
+            <RequireAuth>
+              <FindTire />
+            </RequireAuth>
+          }
+        />
 
         <Route
           path="/retailers"

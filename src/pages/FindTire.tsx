@@ -1,122 +1,188 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Loader2, Sparkles } from "lucide-react";
 import Header from "../components/Header";
-import { Plus } from "lucide-react";
-import StravaConnectButton from "../components/StravaConnectButton";
-import { useActivities } from "../hooks/useActivities";
-import { useAuth } from "../contexts/AuthContext";
+import TireDetailModal from "../components/TireDetailModal";
+import { recommendTiresWithAi } from "../api/ai";
+import { getApiErrorMessage } from "../lib/errors";
+import {
+  formatPerformanceProfile,
+  formatTireTerrain,
+  formatTireUsage,
+} from "../lib/tire-labels";
+import type { AiRecommendedTire } from "../types/ai-tire";
+
+const EXAMPLE_PROMPT =
+  "Je fais du gravel 3 fois par semaine sur routes et chemins mixtes. Je roule environ 80 km par semaine, sans VAE. Je cherche un pneu durable avec un bon grip, en 700x40 tubeless ready.";
 
 export default function FindTire() {
-  const { isAuthenticated } = useAuth();
-  const { activities, isLoading } = useActivities(isAuthenticated);
-  const hasStravaActivities = activities.some(
-    (activity) => activity.source === "STRAVA",
+  const [prompt, setPrompt] = useState("");
+  const [recommendations, setRecommendations] = useState<AiRecommendedTire[]>(
+    [],
   );
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [selectedTireId, setSelectedTireId] = useState<number | null>(null);
+
+  async function handleAnalyze() {
+    const trimmedPrompt = prompt.trim();
+    if (!trimmedPrompt) {
+      setError("Décrivez votre pratique avant de lancer l'analyse.");
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+    setHasSearched(true);
+
+    try {
+      const response = await recommendTiresWithAi(trimmedPrompt);
+      setRecommendations(response.recommendations);
+    } catch (err) {
+      setRecommendations([]);
+      setError(getApiErrorMessage(err));
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   return (
     <div>
+      {selectedTireId !== null && (
+        <TireDetailModal
+          tireId={selectedTireId}
+          onClose={() => setSelectedTireId(null)}
+        />
+      )}
+
       <Header title="Trouver mon pneu" />
 
       <main className="space-y-5 p-5 pb-24">
         <section className="rounded-xl border border-neutral-300 p-5">
-          <h1 className="text-2xl font-bold">Votre profil de pratique</h1>
-
-          <div className="mt-5 space-y-4">
-            <Field label="Type de vélo" value="Gravel" />
-            <Field label="Terrain principal" value="Routes + chemins mixtes" />
-
-            <div>
-              <label className="text-xs text-neutral-500">Priorité</label>
-              <div className="mt-2 flex gap-2">
-                <Chip>Durabilité</Chip>
-                <Chip>Grip</Chip>
-                <Chip><Plus size={14}/></Chip>
-              </div>
-            </div>
-
-            <Field label="Fréquence" value="3 sorties / semaines" />
+          <div className="flex items-center gap-2">
+            <Sparkles className="text-[#27509B]" size={22} />
+            <h1 className="text-2xl font-bold">Analyse IA</h1>
           </div>
-        </section>
 
-        <section className="rounded-xl border border-neutral-300 p-5">
-          <h2 className="text-2xl font-bold">Données connectées</h2>
-
-          <div className="mt-4 space-y-3 text-sm">
-            {!isAuthenticated && (
-              <p>
-                <Link to="/login" className="font-semibold text-[#27509B] underline">
-                  Connectez-vous
-                </Link>{" "}
-                pour lier Strava et importer vos sorties.
-              </p>
-            )}
-
-            {isAuthenticated && isLoading && (
-              <p className="text-neutral-600">Chargement des activités...</p>
-            )}
-
-            {isAuthenticated && !isLoading && hasStravaActivities && (
-              <p className="font-semibold text-green-700">Strava connecté</p>
-            )}
-
-            {isAuthenticated && !isLoading && !hasStravaActivities && (
-              <>
-                <p className="text-neutral-700">
-                  Liez Strava pour analyser vos dernières sorties.
-                </p>
-                <StravaConnectButton />
-              </>
-            )}
-
-            <p className="pt-2 text-neutral-600">
-              Analyse basée sur vos dernières sorties pour affiner la
-              recommandation.
-            </p>
-          </div>
-        </section>
-
-        <section className="rounded-xl border border-neutral-300 p-5">
-          <h2 className="text-2xl font-bold">Votre pneu recommandé</h2>
-
-          <div className="mt-4 h-32 rounded-lg border border-neutral-300 bg-neutral-100" />
-
-          <h3 className="mt-4 text-xl font-bold">Michelin Power Gravel</h3>
-          <p className="mt-2 text-sm text-neutral-700">
-            Adapté à votre pratique mixte route / chemins.
+          <p className="mt-3 text-sm text-neutral-700">
+            Décrivez librement votre pratique : type de vélo, terrains, fréquence,
+            priorités (grip, confort, durabilité…), dimensions de pneu, etc.
           </p>
 
-          <h4 className="mt-4 font-bold">Pourquoi ce choix ?</h4>
+          <textarea
+            value={prompt}
+            onChange={(event) => setPrompt(event.target.value)}
+            placeholder={EXAMPLE_PROMPT}
+            rows={7}
+            className="mt-4 w-full resize-none rounded-lg border border-neutral-300 bg-white px-3 py-3 text-sm leading-relaxed outline-none focus:border-[#27509B] focus:ring-2 focus:ring-[#27509B]/20"
+          />
 
-          <div className="mt-3 flex flex-wrap gap-2">
-            <Chip>Durabilité</Chip>
-            <Chip>Grip</Chip>
-            <Chip>Résistance renforcée</Chip>
-          </div>
+          <button
+            type="button"
+            onClick={() => void handleAnalyze()}
+            disabled={isLoading}
+            className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-[#27509B] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#1a3d7a] disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                Analyse en cours…
+              </>
+            ) : (
+              <>
+                <Sparkles size={16} />
+                Analyser avec l&apos;IA
+              </>
+            )}
+          </button>
 
-          <Link to="/retailers">
-            <button className="mt-5 w-full rounded-lg bg-[#27509B] hover:bg-[#1a3d7a] px-4 py-3 text-sm font-bold text-white">
-              Voir les revendeurs
-            </button>
-          </Link>
+          {error && (
+            <p className="mt-3 text-sm text-red-600" role="alert">
+              {error}
+            </p>
+          )}
         </section>
-      </main>
-    </div>
-  );
-}
 
-function Field({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <label className="text-xs text-neutral-500">{label}</label>
-      <select className="mt-1 w-full rounded-lg border border-neutral-300 bg-neutral-100 px-3 py-3 text-sm">
-        <option>{value}</option>
-      </select>
+        {hasSearched && !isLoading && !error && recommendations.length === 0 && (
+          <section className="rounded-xl border border-neutral-300 p-5">
+            <p className="text-sm text-neutral-600">
+              Aucune recommandation trouvée. Essayez d&apos;enrichir votre
+              description.
+            </p>
+          </section>
+        )}
+
+        {recommendations.length > 0 && (
+          <section className="rounded-xl border border-neutral-300 p-5">
+            <h2 className="text-2xl font-bold">Pneus recommandés</h2>
+            <p className="mt-2 text-sm text-neutral-600">
+              Sélection personnalisée selon votre pratique.
+            </p>
+
+            <ul className="mt-4 space-y-3">
+              {recommendations.map((tire, index) => (
+                <li key={tire.id}>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedTireId(tire.id)}
+                    className="w-full rounded-lg border border-[#27509B]/30 bg-white p-4 text-left transition hover:border-[#27509B] hover:bg-[#D4E7FA]/30"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#27509B] text-xs font-bold text-white">
+                        {index + 1}
+                      </span>
+
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold text-[#27509B]">
+                          {tire.familyName ?? tire.model}
+                        </p>
+                        {tire.familyName && tire.model !== tire.familyName && (
+                          <p className="mt-0.5 text-xs text-neutral-500">
+                            {tire.model}
+                          </p>
+                        )}
+                        <p className="mt-2 text-sm text-neutral-700">
+                          {tire.reason}
+                        </p>
+
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {tire.usageType && (
+                            <Chip>{formatTireUsage(tire.usageType)}</Chip>
+                          )}
+                          {tire.terrainTypes.slice(0, 3).map((terrain) => (
+                            <Chip key={terrain}>
+                              {formatTireTerrain(terrain)}
+                            </Chip>
+                          ))}
+                          {tire.performanceProfiles.slice(0, 2).map((profile) => (
+                            <Chip key={profile}>
+                              {formatPerformanceProfile(profile)}
+                            </Chip>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                </li>
+              ))}
+            </ul>
+
+            <Link to="/retailers">
+              <button className="mt-5 w-full rounded-lg bg-[#27509B] px-4 py-3 text-sm font-bold text-white hover:bg-[#1a3d7a]">
+                Voir les revendeurs
+              </button>
+            </Link>
+          </section>
+        )}
+      </main>
     </div>
   );
 }
 
 function Chip({ children }: { children: React.ReactNode }) {
   return (
-    <span className="rounded-full bg-[#D4E7FA] px-3 py-2 text-xs font-medium text-[#27509B]">
+    <span className="rounded-full bg-[#D4E7FA] px-3 py-1.5 text-xs font-medium text-[#27509B]">
       {children}
     </span>
   );
