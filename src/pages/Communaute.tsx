@@ -22,8 +22,8 @@ export default function Communaute() {
         />
 
         <CommunityCard
-          to="/guides"
-          title="Guides"
+          to="/guide"
+          title="Guide"
           subtitle="Conseils pneus, entretien et bonnes pratiques"
           image="src/assets/guide.jpg"
         />
