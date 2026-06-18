@@ -38,7 +38,7 @@ export default function TireTrackingPage() {
     isLoading: isUserTiresLoading,
     error: userTiresError,
     refresh: refreshUserTires,
-  } = useUserTires(validTireId !== null);
+  } = useUserTires();
   const currentTire =
     validTireId !== null
       ? tires.find((tire) => tire.id === validTireId)
