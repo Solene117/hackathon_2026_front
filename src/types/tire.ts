@@ -62,6 +62,11 @@ export type UserTire = {
   health: number;
 };
 
+export type TireCatalogItem = {
+  id: number;
+  name: string;
+};
+
 export type UserTireInfo = {
   id: number;
   kilometers: number | null;
