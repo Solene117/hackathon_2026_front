@@ -3,16 +3,26 @@ import { useParams } from "react-router-dom";
 import PageShell from "../../components/layout/PageShell";
 import AlertsWidget from "../../components/tires/AlertsWidget";
 import RecommendationModal from "../../components/tires/RecommendationModal";
+import TireDetailModal from "../../components/tires/TireDetailModal";
 import {
   TireCurrentSection,
   TireHealthSection,
   TireUsageSection,
 } from "../../components/tires/TireTrackingSections";
+import { useUserTireInfo } from "../../hooks/useUserTireInfo";
 
 export default function TireTrackingPage() {
   const { tireId: tireIdParam } = useParams<{ tireId: string }>();
   const tireId = tireIdParam ? Number(tireIdParam) : undefined;
+  const validTireId =
+    tireId !== undefined && !Number.isNaN(tireId) ? tireId : null;
+  const {
+    tireInfo,
+    isLoading: isTireInfoLoading,
+    error: tireInfoError,
+  } = useUserTireInfo(validTireId);
   const [showRecommendation, setShowRecommendation] = useState(false);
+  const [showTireDetail, setShowTireDetail] = useState(false);
 
   return (
     <>
@@ -20,8 +30,15 @@ export default function TireTrackingPage() {
         <RecommendationModal onClose={() => setShowRecommendation(false)} />
       )}
 
+      {showTireDetail && validTireId !== null && (
+        <TireDetailModal
+          tireId={validTireId}
+          onClose={() => setShowTireDetail(false)}
+        />
+      )}
+
       <PageShell title="Suivi du pneu" mainClassName="space-y-5 p-5 pb-24">
-        <TireCurrentSection />
+        <TireCurrentSection smartTire={tireInfo?.smartTire === true} />
 
         <TireHealthSection
           health={42}
@@ -29,11 +46,16 @@ export default function TireTrackingPage() {
           onShowRecommendation={() => setShowRecommendation(true)}
         />
 
-        {tireId !== undefined && !Number.isNaN(tireId) && (
-          <AlertsWidget tireId={tireId} />
+        {validTireId !== null && (
+          <AlertsWidget tireId={validTireId} />
         )}
 
-        <TireUsageSection />
+        <TireUsageSection
+          tireInfo={tireInfo}
+          isLoading={isTireInfoLoading}
+          error={tireInfoError}
+          onShowTechnicalDetail={() => setShowTireDetail(true)}
+        />
       </PageShell>
     </>
   );
