@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { deleteUserTire } from "../../api/tires";
+import { ApiError } from "../../api/client";
+import { deleteUserTire, updateUserTireActive } from "../../api/tires";
 import PageShell from "../../components/layout/PageShell";
+import ActiveTireConflictModal from "../../components/tires/ActiveTireConflictModal";
 import ConfirmTireDeleteModal from "../../components/tires/ConfirmTireDeleteModal";
 import RecommendationModal from "../../components/tires/RecommendationModal";
 import TireDetailModal from "../../components/tires/TireDetailModal";
@@ -12,6 +14,7 @@ import {
 } from "../../components/tires/TireTrackingSections";
 import { useUserTireInfo } from "../../hooks/useUserTireInfo";
 import { useUserTireWear } from "../../hooks/useUserTireWear";
+import { useUserTires } from "../../hooks/useUserTires";
 import { getApiErrorMessage } from "../../lib/errors";
 
 export default function TireTrackingPage() {
@@ -30,11 +33,36 @@ export default function TireTrackingPage() {
     isLoading: isTireWearLoading,
     error: tireWearError,
   } = useUserTireWear(validTireId);
+  const {
+    tires,
+    isLoading: isUserTiresLoading,
+    error: userTiresError,
+    refresh: refreshUserTires,
+  } = useUserTires(validTireId !== null);
+  const currentTire =
+    validTireId !== null
+      ? tires.find((tire) => tire.id === validTireId)
+      : undefined;
+  const displayedIsActive =
+    currentTire?.isActive ?? null;
   const [showRecommendation, setShowRecommendation] = useState(false);
   const [showTireDetail, setShowTireDetail] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [isUpdatingActive, setIsUpdatingActive] = useState(false);
+  const [activeOverride, setActiveOverride] = useState<{
+    tireId: number;
+    isActive: boolean;
+  } | null>(null);
+  const [activeError, setActiveError] = useState<string | null>(null);
+  const [activeConflictMessage, setActiveConflictMessage] = useState<
+    string | null
+  >(null);
+  const activeState =
+    activeOverride?.tireId === validTireId
+      ? activeOverride.isActive
+      : displayedIsActive;
 
   function openDeleteModal() {
     setDeleteError(null);
@@ -62,6 +90,31 @@ export default function TireTrackingPage() {
     }
   }
 
+  async function handleToggleActive() {
+    if (validTireId === null || activeState === null) return;
+
+    const nextIsActive = !activeState;
+
+    setActiveError(null);
+    setActiveConflictMessage(null);
+    setIsUpdatingActive(true);
+    setActiveOverride({ tireId: validTireId, isActive: nextIsActive });
+
+    try {
+      await updateUserTireActive(validTireId, nextIsActive);
+      await refreshUserTires();
+    } catch (err) {
+      setActiveOverride(null);
+      if (err instanceof ApiError && err.status === 409) {
+        setActiveConflictMessage(getApiErrorMessage(err));
+      } else {
+        setActiveError(getApiErrorMessage(err));
+      }
+    } finally {
+      setIsUpdatingActive(false);
+    }
+  }
+
   return (
     <>
       {showRecommendation && (
@@ -82,11 +135,20 @@ export default function TireTrackingPage() {
         onCancel={closeDeleteModal}
       />
 
+      <ActiveTireConflictModal
+        message={activeConflictMessage}
+        onClose={() => setActiveConflictMessage(null)}
+      />
+
       <PageShell title="Suivi du pneu" mainClassName="space-y-5 p-5 pb-24">
         <TireCurrentSection
           model={tireWear?.model}
           position={tireWear?.position}
           smartTire={tireInfo?.smartTire === true}
+          isActive={activeState}
+          isActiveLoading={isUpdatingActive || isUserTiresLoading}
+          activeError={activeError ?? userTiresError}
+          onToggleActive={() => void handleToggleActive()}
           isLoading={isTireWearLoading}
           error={tireWearError}
         />
@@ -111,6 +173,7 @@ export default function TireTrackingPage() {
             {deleteError && (
               <p className="mb-3 text-sm text-red-600">{deleteError}</p>
             )}
+
             <button
               type="button"
               onClick={openDeleteModal}

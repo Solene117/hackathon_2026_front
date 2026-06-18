@@ -1,4 +1,5 @@
 import { api } from "./client";
+import type { Dealer } from "../types/dealer";
 import type {
   TireDetail,
   UserTire,
@@ -28,12 +29,26 @@ export function fetchTireModelDetail(id: number): Promise<TireDetail> {
   return api<TireDetail>(`/api/tires/model/${id}`);
 }
 
+export function fetchTyreDealers(tyreId: number): Promise<Dealer[]> {
+  return api<Dealer[]>(`/api/tires/model/${tyreId}/dealers`);
+}
+
 export function fetchUserTireInfo(id: number): Promise<UserTireInfo> {
   return api<UserTireInfo>(`/api/tires/mine/${id}/info`);
 }
 
 export function fetchUserTireWear(id: number): Promise<UserTireWear> {
   return api<UserTireWear>(`/api/tires/mine/${id}/wear`);
+}
+
+export function updateUserTireActive(
+  id: number,
+  isActive: boolean,
+): Promise<UserTire> {
+  return api<UserTire>(`/api/tires/mine/${id}/active`, {
+    method: "PATCH",
+    body: JSON.stringify({ isActive }),
+  });
 }
 
 export function deleteUserTire(id: number): Promise<{ deleted: boolean }> {
