@@ -7,6 +7,7 @@ import type { UserTireInfo, UserTireWear } from "../../types/tire";
 type TireCurrentSectionProps = {
   model?: string | null;
   position?: string | null;
+  tireImage?: string | null;
   smartTire?: boolean;
   isActive?: boolean | null;
   isActiveLoading?: boolean;
@@ -19,6 +20,7 @@ type TireCurrentSectionProps = {
 export function TireCurrentSection({
   model,
   position,
+  tireImage,
   smartTire = false,
   isActive = null,
   isActiveLoading = false,
@@ -30,6 +32,7 @@ export function TireCurrentSection({
   const positionLabel = formatTirePosition(position);
   const activeLabel =
     isActive === null ? "Indisponible" : isActive ? "Actif" : "Inactif";
+  const productImage = normalizeImageUrl(tireImage);
 
   return (
     <section className="rounded-xl border border-neutral-300 p-5">
@@ -69,7 +72,15 @@ export function TireCurrentSection({
         )}
       </div>
 
-      <div className="mt-4 h-32 rounded-lg border border-neutral-300 bg-neutral-100" />
+      <div className="mt-4 flex h-32 items-center justify-center rounded-lg border border-neutral-300 bg-neutral-100">
+        <img
+          src={productImage ?? undefined}
+          alt={productImage ? (model ? `Pneu ${model}` : "Pneu") : ""}
+          className={`h-full w-full object-contain p-3 ${
+            productImage ? "" : "opacity-0"
+          }`}
+        />
+      </div>
 
       <h3 className="mt-4 text-xl font-bold">
         {isLoading ? "Chargement..." : (model ?? "—")}
@@ -186,6 +197,11 @@ function formatWearScore(score: number | null): string {
 function clampProgressValue(value: number | null): number {
   if (value == null) return 0;
   return Math.min(100, Math.max(0, value));
+}
+
+function normalizeImageUrl(imageUrl: string | null | undefined): string | null {
+  const trimmedUrl = imageUrl?.trim();
+  return trimmedUrl ? trimmedUrl : null;
 }
 
 type TireUsageSectionProps = {

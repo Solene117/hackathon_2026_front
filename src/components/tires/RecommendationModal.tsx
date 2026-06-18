@@ -3,12 +3,16 @@ import Chip from "../ui/Chip";
 import ModalPortal from "../ui/ModalPortal";
 
 type RecommendationModalProps = {
+  tireImage?: string | null;
   onClose: () => void;
 };
 
 export default function RecommendationModal({
+  tireImage,
   onClose,
 }: RecommendationModalProps) {
+  const productImage = normalizeImageUrl(tireImage);
+
   return (
     <ModalPortal>
       <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-5">
@@ -36,7 +40,13 @@ export default function RecommendationModal({
           <h3 className="mt-5 font-bold">Pneu conseillé</h3>
 
           <div className="mt-3 flex h-32 items-center justify-center rounded-lg border border-neutral-300 bg-neutral-100">
-            <span className="text-sm text-neutral-500">Image du pneu</span>
+            <img
+              src={productImage ?? undefined}
+              alt={productImage ? "Pneu recommandé" : ""}
+              className={`h-full w-full object-contain p-3 ${
+                productImage ? "" : "opacity-0"
+              }`}
+            />
           </div>
 
           <h2 className="mt-4 text-xl font-bold">Michelin Protek Cross</h2>
@@ -78,4 +88,9 @@ export default function RecommendationModal({
     </div>
     </ModalPortal>
   );
+}
+
+function normalizeImageUrl(imageUrl: string | null | undefined): string | null {
+  const trimmedUrl = imageUrl?.trim();
+  return trimmedUrl ? trimmedUrl : null;
 }
