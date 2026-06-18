@@ -1,25 +1,25 @@
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from "react-router-dom";
-import Layout from "./components/Layout";
-import RequireAuth from "./components/RequireAuth";
+import Layout from "./components/layout/Layout";
+import RequireAuth from "./components/layout/RequireAuth";
+import RecommendationModal from "./components/tires/RecommendationModal";
 import { useAuth } from "./contexts/AuthContext";
 
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
-import FindTire from "./pages/FindTire";
-import MyTires from "./pages/MyTires";
-import TireTracking from "./pages/TireTracking";
-import RecommendationModal from "./pages/RecommendationModal";
-import Activities from "./pages/Activities";
-import ActivityPage from "./pages/ActivityPage";
-import Retailers from "./pages/Retailers";
-import Settings from "./pages/Settings";
-import Communaute from "./pages/Communaute";
-import Recompenses from "./pages/Recompenses";
-import Parrainage from "./pages/Parrainage";
-import Evenements from "./pages/Evenements";
-import Guide from "./pages/Guide";
+import HomePage from "./pages/home/HomePage";
+import LoginPage from "./pages/auth/LoginPage";
+import RegisterPage from "./pages/auth/RegisterPage";
+import DashboardPage from "./pages/dashboard/DashboardPage";
+import FindTirePage from "./pages/tires/FindTirePage";
+import MyTiresPage from "./pages/tires/MyTiresPage";
+import TireTrackingPage from "./pages/tires/TireTrackingPage";
+import ActivitiesPage from "./pages/activities/ActivitiesPage";
+import ActivityPage from "./pages/activities/ActivityPage";
+import RetailersPage from "./pages/retailers/RetailersPage";
+import SettingsPage from "./pages/settings/SettingsPage";
+import CommunautePage from "./pages/community/CommunautePage";
+import RecompensesPage from "./pages/rewards/RecompensesPage";
+import ParrainagePage from "./pages/community/ParrainagePage";
+import EvenementsPage from "./pages/community/EvenementsPage";
+import GuidePage from "./pages/community/GuidePage";
 
 function HomeRoute() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -32,7 +32,7 @@ function HomeRoute() {
     );
   }
 
-  return isAuthenticated ? <Navigate to="/dashboard" replace /> : <Home />;
+  return isAuthenticated ? <Navigate to="/dashboard" replace /> : <HomePage />;
 }
 
 function RecommendationPage() {
@@ -46,14 +46,14 @@ function AppRoutes() {
       <Route element={<Layout />}>
         <Route path="/" element={<HomeRoute />} />
 
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
 
         <Route
           path="/trouver-pneu"
           element={
             <RequireAuth>
-              <FindTire />
+              <FindTirePage />
             </RequireAuth>
           }
         />
@@ -62,7 +62,7 @@ function AppRoutes() {
           path="/retailers"
           element={
             <RequireAuth>
-              <Retailers />
+              <RetailersPage />
             </RequireAuth>
           }
         />
@@ -71,7 +71,7 @@ function AppRoutes() {
           path="/settings"
           element={
             <RequireAuth>
-              <Settings />
+              <SettingsPage />
             </RequireAuth>
           }
         />
@@ -80,7 +80,7 @@ function AppRoutes() {
           path="/dashboard"
           element={
             <RequireAuth>
-              <Dashboard />
+              <DashboardPage />
             </RequireAuth>
           }
         />
@@ -89,7 +89,7 @@ function AppRoutes() {
           path="/mes-pneus"
           element={
             <RequireAuth>
-              <MyTires />
+              <MyTiresPage />
             </RequireAuth>
           }
         />
@@ -98,7 +98,7 @@ function AppRoutes() {
           path="/activites"
           element={
             <RequireAuth>
-              <Activities />
+              <ActivitiesPage />
             </RequireAuth>
           }
         />
@@ -107,7 +107,7 @@ function AppRoutes() {
           path="/suivi-pneu/:tireId"
           element={
             <RequireAuth>
-              <TireTracking />
+              <TireTrackingPage />
             </RequireAuth>
           }
         />
@@ -116,7 +116,7 @@ function AppRoutes() {
           path="/communaute"
           element={
             <RequireAuth>
-              <Communaute />
+              <CommunautePage />
             </RequireAuth>
           }
         />
@@ -125,7 +125,7 @@ function AppRoutes() {
           path="/recompenses"
           element={
             <RequireAuth>
-              <Recompenses />
+              <RecompensesPage />
             </RequireAuth>
           }
         />
@@ -134,16 +134,16 @@ function AppRoutes() {
           path="/parrainage"
           element={
             <RequireAuth>
-              <Parrainage />
+              <ParrainagePage />
             </RequireAuth>
           }
         />
 
-         <Route
+        <Route
           path="/evenements"
           element={
             <RequireAuth>
-              <Evenements />
+              <EvenementsPage />
             </RequireAuth>
           }
         />
@@ -171,7 +171,7 @@ function AppRoutes() {
         path="/guide"
         element={
           <RequireAuth>
-            <Guide />
+            <GuidePage />
           </RequireAuth>
         }
       />
