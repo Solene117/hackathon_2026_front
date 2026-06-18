@@ -6,7 +6,7 @@ import HomeHowItWorks from "../../components/home/HomeHowItWorks";
 
 export default function HomePage() {
   return (
-    <PageShell title="MICHELIN Ride Companion" mainClassName="space-y-5 p-5 pb-24">
+    <PageShell mainClassName="space-y-5 p-5 pb-28">
       <HomeHero />
       <HomeHowItWorks />
       <HomeBenefits />

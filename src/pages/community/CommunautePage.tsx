@@ -1,9 +1,17 @@
 import PageShell from "../../components/layout/PageShell";
+import SectionHeader from "../../components/ui/SectionHeader";
 import CommunityCard from "../../components/community/CommunityCard";
+import { Users2 } from "lucide-react";
 
 export default function CommunautePage() {
   return (
-    <PageShell title="Communauté" mainClassName="space-y-5 p-5 pb-24">
+    <PageShell mainClassName="space-y-5 p-5 pb-28">
+      <SectionHeader
+        title="Communauté"
+        subtitle="Événements, parrainage et guides pratiques"
+        icon={<Users2 size={20} className="text-michelin-blue" />}
+      />
+
       <CommunityCard
         to="/evenements"
         title="Événements"

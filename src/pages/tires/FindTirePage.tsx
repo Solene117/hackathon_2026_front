@@ -1,5 +1,6 @@
 import { useState } from "react";
 import PageShell from "../../components/layout/PageShell";
+import SectionHeader from "../../components/ui/SectionHeader";
 import TireDetailModal from "../../components/tires/TireDetailModal";
 import {
   AiAnalysisPanel,
@@ -9,6 +10,7 @@ import EmptyState from "../../components/ui/EmptyState";
 import { recommendTiresWithAi } from "../../api/ai";
 import { getApiErrorMessage } from "../../lib/errors";
 import type { AiRecommendedTire } from "../../types/ai-tire";
+import choseRightTireIcon from "../../assets/chose_right_tire.svg";
 
 export default function FindTirePage() {
   const [prompt, setPrompt] = useState("");
@@ -51,7 +53,12 @@ export default function FindTirePage() {
         />
       )}
 
-      <PageShell title="Trouver mon pneu" mainClassName="space-y-5 p-5 pb-24">
+      <PageShell mainClassName="space-y-5 p-5 pb-28">
+        <SectionHeader
+          title="Trouver mon pneu"
+          subtitle="Recommandation personnalisée par IA"
+          icon={<img src={choseRightTireIcon} alt="" aria-hidden className="h-5 w-5" style={{ filter: "brightness(0) saturate(100%) invert(54%) sepia(97%) saturate(401%) hue-rotate(47deg)" }} />}
+        />
         <AiAnalysisPanel
           prompt={prompt}
           isLoading={isLoading}
@@ -61,7 +68,7 @@ export default function FindTirePage() {
         />
 
         {hasSearched && !isLoading && !error && recommendations.length === 0 && (
-          <section className="rounded-xl border border-neutral-300 p-5">
+          <section className="rounded-2xl border border-neutral-100 bg-white p-5 shadow-sm">
             <EmptyState message="Aucune recommandation trouvée. Essayez d'enrichir votre description." />
           </section>
         )}

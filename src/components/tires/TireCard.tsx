@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import ProgressBar from "../ui/ProgressBar";
 
 type TireCardProps = {
   userTireId?: number;
@@ -8,56 +7,69 @@ type TireCardProps = {
   health: number;
 };
 
+function getHealthStyle(health: number) {
+  if (health >= 70) {
+    return {
+      bar: "bg-michelin-green",
+      text: "text-michelin-green",
+      track: "bg-michelin-green/15",
+    };
+  }
+  if (health >= 40) {
+    return {
+      bar: "bg-amber-400",
+      text: "text-amber-500",
+      track: "bg-amber-50",
+    };
+  }
+  return {
+    bar: "bg-red-500",
+    text: "text-red-500",
+    track: "bg-red-50",
+  };
+}
+
 export default function TireCard({
   userTireId,
   name,
   status = "Actif",
   health,
 }: TireCardProps) {
-  const content = (
-    <div className="rounded-xl border border-neutral-300 bg-white p-5 transition hover:shadow-md">
-      <div className="flex items-start justify-between">
-        <strong className="text-xl">{name}</strong>
+  const hs = getHealthStyle(health);
 
+  const content = (
+    <div className="rounded-2xl border border-neutral-100 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+      {/* Ligne titre + badge */}
+      <div className="flex items-start justify-between gap-3">
+        <strong className="text-base font-bold text-neutral-900 leading-tight">{name}</strong>
         <span
-          className={`rounded-full px-3 py-1 text-xs font-medium ${
+          className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${
             status === "Actif"
-              ? "bg-green-100 text-green-700"
-              : "bg-red-100 text-red-700"
+              ? "bg-michelin-green/10 text-michelin-green"
+              : "bg-red-50 text-red-500"
           }`}
         >
           {status}
         </span>
-
-        <div className="mt-4 flex justify-between">
-          <span>État global</span>
-          <strong className="text-xl font-bold text-[#27509B]">
-            {health}%
-          </strong>
-        </div>
-
-        <div className="mt-4">
-          <ProgressBar value={health} />
-        </div>
       </div>
 
-      <div className="mt-4 flex justify-between">
-        <span>État global</span>
-        <strong>{health}%</strong>
-      </div>
-
-      <div className="mt-2 h-2 rounded-full bg-neutral-200">
-        <div
-          className="h-2 rounded-full bg-blue-700 transition-all"
-          style={{ width: `${health}%` }}
-        />
+      {/* État + barre de progression */}
+      <div className="mt-4">
+        <div className="mb-2 flex items-center justify-between">
+          <span className="text-xs font-medium text-neutral-500">État global</span>
+          <strong className={`text-lg font-bold ${hs.text}`}>{health}%</strong>
+        </div>
+        <div className={`h-2.5 w-full rounded-full ${hs.track}`}>
+          <div
+            className={`h-2.5 rounded-full transition-all duration-700 ${hs.bar}`}
+            style={{ width: `${health}%` }}
+          />
+        </div>
       </div>
     </div>
   );
 
-  if (!userTireId) {
-    return content;
-  }
+  if (!userTireId) return content;
 
   return (
     <Link to={`/suivi-pneu/${userTireId}`} className="block">

@@ -23,7 +23,7 @@ export default function DashboardPage() {
   const isStravaLinked = user?.stravaLinked === true;
 
   return (
-    <PageShell title="MICHELIN Ride Companion" mainClassName="p-6 pb-24">
+    <PageShell mainClassName="p-6 pb-28">
       <h1 className="mb-8 text-3xl font-bold">
         Bonjour {getUserDisplayName(user)}
       </h1>
