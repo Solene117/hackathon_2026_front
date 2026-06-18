@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useUserTireInfo } from "../../hooks/useUserTireInfo";
 import type { ActivityTireSummary } from "../../types/activity";
 
 const POSITION_LABELS: Record<string, string> = {
@@ -12,9 +13,11 @@ type ActivityTireCardProps = {
 };
 
 export default function ActivityTireCard({ tire }: ActivityTireCardProps) {
+  const { tireInfo } = useUserTireInfo(tire.userTireId);
   const positionLabel = tire.position
     ? (POSITION_LABELS[tire.position] ?? tire.position)
     : null;
+  const productImage = normalizeImageUrl(tireInfo?.tireImage ?? tire.tireImage);
 
   return (
     <Link
@@ -22,7 +25,13 @@ export default function ActivityTireCard({ tire }: ActivityTireCardProps) {
       className="block rounded-xl border border-neutral-300 bg-white transition hover:border-[#27509B] hover:shadow-md"
     >
       <div className="flex h-28 items-center justify-center rounded-t-xl border-b border-neutral-200 bg-neutral-100">
-        <span className="text-sm text-neutral-500">Image pneu</span>
+        <img
+          src={productImage ?? undefined}
+          alt={productImage ? `Pneu ${tire.name}` : ""}
+          className={`h-full w-full object-contain p-3 ${
+            productImage ? "" : "opacity-0"
+          }`}
+        />
       </div>
 
       <div className="p-4">
@@ -33,4 +42,9 @@ export default function ActivityTireCard({ tire }: ActivityTireCardProps) {
       </div>
     </Link>
   );
+}
+
+function normalizeImageUrl(imageUrl: string | null | undefined): string | null {
+  const trimmedUrl = imageUrl?.trim();
+  return trimmedUrl ? trimmedUrl : null;
 }

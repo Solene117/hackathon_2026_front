@@ -6,6 +6,7 @@ import ModalPortal from "../ui/ModalPortal";
 
 type TireDetailModalProps = {
   tireId: number;
+  tireImage?: string | null;
   onClose: () => void;
 };
 
@@ -13,6 +14,7 @@ type ModalTab = "characteristics" | "dealers";
 
 export default function TireDetailModal({
   tireId,
+  tireImage,
   onClose,
 }: TireDetailModalProps) {
   const { tire, isLoading, error } = useTireModelDetail(tireId);
@@ -90,7 +92,7 @@ export default function TireDetailModal({
                 hidden={activeTab !== "characteristics"}
                 className={activeTab !== "characteristics" ? "hidden" : undefined}
               >
-                <TireCharacteristicsTab tire={tire} />
+                <TireCharacteristicsTab tire={tire} tireImage={tireImage} />
               </div>
 
               <div

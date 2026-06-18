@@ -16,6 +16,7 @@ export type ActivityTireSummary = {
   userTireId: number;
   name: string;
   position: string | null;
+  tireImage?: string | null;
 };
 
 export type Activity = {

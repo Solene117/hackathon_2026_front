@@ -13,11 +13,15 @@ import type { TireDetail } from "../../types/tire";
 
 type TireCharacteristicsTabProps = {
   tire: TireDetail;
+  tireImage?: string | null;
 };
 
 export default function TireCharacteristicsTab({
   tire,
+  tireImage,
 }: TireCharacteristicsTabProps) {
+  const productImage = normalizeImageUrl(tireImage);
+
   return (
     <>
       {(tire.familyName || tire.productRange) && (
@@ -27,7 +31,13 @@ export default function TireCharacteristicsTab({
       )}
 
       <div className="mt-4 flex h-32 items-center justify-center rounded-lg border border-neutral-300 bg-neutral-100">
-        <span className="text-sm text-neutral-500">Image du pneu</span>
+        <img
+          src={productImage ?? undefined}
+          alt={productImage ? `Pneu ${tire.model}` : ""}
+          className={`h-full w-full object-contain p-3 ${
+            productImage ? "" : "opacity-0"
+          }`}
+        />
       </div>
 
       {tire.terrainTypes.length > 0 && (
@@ -96,6 +106,11 @@ export default function TireCharacteristicsTab({
       </div>
     </>
   );
+}
+
+function normalizeImageUrl(imageUrl: string | null | undefined): string | null {
+  const trimmedUrl = imageUrl?.trim();
+  return trimmedUrl ? trimmedUrl : null;
 }
 
 function SpecRow({ label, value }: { label: string; value: string }) {

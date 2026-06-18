@@ -72,6 +72,7 @@ export type UserTireInfo = {
   kilometers: number | null;
   lastPressureBar: number | null;
   smartTire: boolean | null;
+  tireImage: string | null;
 };
 
 export type UserTireWear = {

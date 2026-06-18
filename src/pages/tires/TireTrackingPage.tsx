@@ -38,7 +38,7 @@ export default function TireTrackingPage() {
     isLoading: isUserTiresLoading,
     error: userTiresError,
     refresh: refreshUserTires,
-  } = useUserTires(validTireId !== null);
+  } = useUserTires();
   const currentTire =
     validTireId !== null
       ? tires.find((tire) => tire.id === validTireId)
@@ -118,12 +118,16 @@ export default function TireTrackingPage() {
   return (
     <>
       {showRecommendation && (
-        <RecommendationModal onClose={() => setShowRecommendation(false)} />
+        <RecommendationModal
+          tireImage={tireInfo?.tireImage}
+          onClose={() => setShowRecommendation(false)}
+        />
       )}
 
       {showTireDetail && validTireId !== null && (
         <TireDetailModal
           tireId={validTireId}
+          tireImage={tireInfo?.tireImage}
           onClose={() => setShowTireDetail(false)}
         />
       )}
@@ -144,6 +148,7 @@ export default function TireTrackingPage() {
         <TireCurrentSection
           model={tireWear?.model}
           position={tireWear?.position}
+          tireImage={tireInfo?.tireImage}
           smartTire={tireInfo?.smartTire === true}
           isActive={activeState}
           isActiveLoading={isUpdatingActive || isUserTiresLoading}
