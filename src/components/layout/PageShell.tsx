@@ -1,4 +1,5 @@
 import Header from "./Header";
+import { useAuth } from "../../contexts/AuthContext";
 
 type PageShellProps = {
   title?: string;
@@ -14,10 +15,15 @@ export default function PageShell({
   children,
   mainClassName = "p-5 pb-28",
 }: PageShellProps) {
+  const { isAuthenticated } = useAuth();
+  const resolvedMainClassName = isAuthenticated
+    ? mainClassName
+    : mainClassName.replace(/\bpb-28\b/g, "pb-5");
+
   return (
     <div>
       <Header title={title} showBackButton={showBackButton} />
-      <main className={mainClassName}>{children}</main>
+      <main className={resolvedMainClassName}>{children}</main>
     </div>
   );
 }

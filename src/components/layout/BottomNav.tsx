@@ -14,7 +14,9 @@ type NavItemDef = {
 };
 
 export default function BottomNav() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading || !isAuthenticated) return null;
 
   if (!isAuthenticated) return null;
 
