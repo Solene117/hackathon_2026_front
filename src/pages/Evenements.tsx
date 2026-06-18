@@ -1,4 +1,4 @@
-import Header from "../components/Header";
+import Header from "../components/layout/Header";
 import { Calendar, MapPin, Users } from "lucide-react";
 import { useEvents } from "../hooks/useEvents";
 
