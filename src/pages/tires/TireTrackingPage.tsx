@@ -4,7 +4,6 @@ import { ApiError } from "../../api/client";
 import { deleteUserTire, updateUserTireActive } from "../../api/tires";
 import PageShell from "../../components/layout/PageShell";
 import ActiveTireConflictModal from "../../components/tires/ActiveTireConflictModal";
-import AlertsWidget from "../../components/tires/AlertsWidget";
 import ConfirmTireDeleteModal from "../../components/tires/ConfirmTireDeleteModal";
 import RecommendationModal from "../../components/tires/RecommendationModal";
 import TireDetailModal from "../../components/tires/TireDetailModal";
@@ -161,10 +160,6 @@ export default function TireTrackingPage() {
           error={tireWearError}
           onShowRecommendation={() => setShowRecommendation(true)}
         />
-
-        {validTireId !== null && (
-          <AlertsWidget tireId={validTireId} />
-        )}
 
         <TireUsageSection
           tireInfo={tireInfo}

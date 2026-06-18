@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import Chip from "../ui/Chip";
+import ModalPortal from "../ui/ModalPortal";
 
 type RecommendationModalProps = {
   onClose: () => void;
@@ -9,7 +10,8 @@ export default function RecommendationModal({
   onClose,
 }: RecommendationModalProps) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <ModalPortal>
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-5">
       <div className="w-full max-w-[430px] px-5">
         <section className="rounded-2xl border border-neutral-300 bg-white p-5 shadow-2xl">
           <div className="flex items-start justify-between gap-4">
@@ -74,5 +76,6 @@ export default function RecommendationModal({
         </section>
       </div>
     </div>
+    </ModalPortal>
   );
 }

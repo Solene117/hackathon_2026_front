@@ -9,19 +9,20 @@ import EmptyState from "../../components/ui/EmptyState";
 import LoadingMessage from "../../components/ui/LoadingMessage";
 import { startActivity } from "../../api/activities";
 import { useActivities } from "../../hooks/useActivities";
+import { invalidateAfterActivityChange } from "../../stores";
 import { getApiErrorMessage } from "../../lib/errors";
 import tireLifeIcon from "../../assets/tire_life.svg";
 
 export default function ActivitiesPage() {
   const navigate = useNavigate();
-  const { activities, isLoading, error, refresh } = useActivities();
+  const { activities, isLoading, error } = useActivities();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
 
   async function handleRefresh() {
     setIsRefreshing(true);
-    await refresh();
+    await invalidateAfterActivityChange();
     setIsRefreshing(false);
   }
 

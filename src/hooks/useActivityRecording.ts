@@ -6,6 +6,7 @@ import {
   finishActivity,
 } from "../api/activities";
 import { getApiErrorMessage } from "../lib/errors";
+import { invalidateAfterActivityChange } from "../stores";
 import {
   haversineDistanceMeters,
   metersPerSecondToKmh,
@@ -317,6 +318,7 @@ export function useActivityRecording({
       try {
         await finishActivity(activityId, payload);
         clearRecordingState(activityId);
+        await invalidateAfterActivityChange();
         onExitRef.current();
       } catch (err) {
         setError(getApiErrorMessage(err));
@@ -335,6 +337,7 @@ export function useActivityRecording({
     try {
       await deleteActivity(activityId);
       clearRecordingState(activityId);
+      await invalidateAfterActivityChange();
       onExitRef.current();
     } catch (err) {
       setError(getApiErrorMessage(err));
