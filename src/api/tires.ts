@@ -1,4 +1,5 @@
 import { api } from "./client";
+import type { Dealer } from "../types/dealer";
 import type {
   TireDetail,
   UserTire,
@@ -26,6 +27,10 @@ export function fetchUserTires(): Promise<UserTire[]> {
 
 export function fetchTireModelDetail(id: number): Promise<TireDetail> {
   return api<TireDetail>(`/api/tires/model/${id}`);
+}
+
+export function fetchTyreDealers(tyreId: number): Promise<Dealer[]> {
+  return api<Dealer[]>(`/api/tires/model/${tyreId}/dealers`);
 }
 
 export function fetchUserTireInfo(id: number): Promise<UserTireInfo> {
