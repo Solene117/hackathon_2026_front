@@ -1,14 +1,36 @@
 import TireCard from "../tires/TireCard";
+import EmptyState from "../ui/EmptyState";
+import ErrorAlert from "../ui/ErrorAlert";
+import LoadingMessage from "../ui/LoadingMessage";
+import { useUserTires } from "../../hooks/useUserTires";
+import { selectActiveTires } from "../../stores/userTiresStore";
 
 export default function ActiveTiresSection() {
+  const { tires, isLoading, error } = useUserTires();
+  const activeTires = selectActiveTires(tires);
+
   return (
-    <section className="rounded-xl border border-neutral-300 p-5">
-      <h2 className="mb-4 text-2xl font-bold">Pneus actifs</h2>
-      <p className="mb-4 text-sm text-neutral-600">
-        La gestion des pneus sera disponible prochainement.
-      </p>
+    <section className="rounded-2xl border border-neutral-100 bg-white p-5 shadow-sm">
+      <h2 className="mb-4 text-xl font-bold text-neutral-900">Pneus actifs</h2>
+
+      {isLoading && <LoadingMessage />}
+
+      {error && <ErrorAlert message={error} className="mb-4" />}
+
+      {!isLoading && !error && activeTires.length === 0 && (
+        <EmptyState message="Aucun pneu actif pour le moment." />
+      )}
+
       <div className="space-y-4">
-        <TireCard name="Michelin Power Gravel" health={72} />
+        {activeTires.map((tire) => (
+          <TireCard
+            key={tire.id}
+            userTireId={tire.id}
+            name={tire.model}
+            status="Actif"
+            health={tire.health}
+          />
+        ))}
       </div>
     </section>
   );

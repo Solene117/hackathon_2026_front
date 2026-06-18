@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import PageShell from "../../components/layout/PageShell";
-import AlertsWidget from "../../components/tires/AlertsWidget";
 import RecommendationModal from "../../components/tires/RecommendationModal";
 import TireDetailModal from "../../components/tires/TireDetailModal";
 import {
@@ -45,10 +44,6 @@ export default function TireTrackingPage() {
           label="Bon état"
           onShowRecommendation={() => setShowRecommendation(true)}
         />
-
-        {validTireId !== null && (
-          <AlertsWidget tireId={validTireId} />
-        )}
 
         <TireUsageSection
           tireInfo={tireInfo}

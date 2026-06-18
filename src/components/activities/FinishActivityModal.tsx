@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { fetchTerrainTypes } from "../../api/activities";
 import { getApiErrorMessage } from "../../lib/errors";
 import type { TerrainType } from "../../types/activity";
+import ModalPortal from "../ui/ModalPortal";
 
 type FinishActivityModalProps = {
   isOpen: boolean;
@@ -12,43 +13,41 @@ type FinishActivityModalProps = {
   onCancel: () => void;
 };
 
-export default function FinishActivityModal({
-  isOpen,
+type FinishActivityFormProps = Omit<FinishActivityModalProps, "isOpen">;
+
+function FinishActivityForm({
   isSubmitting,
   defaultName,
   defaultTerrainType,
   onSubmit,
   onCancel,
-}: FinishActivityModalProps) {
+}: FinishActivityFormProps) {
   const [name, setName] = useState(defaultName);
   const [terrainType, setTerrainType] = useState<TerrainType>(defaultTerrainType);
   const [terrainOptions, setTerrainOptions] = useState<
     { value: TerrainType; label: string }[]
   >([]);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [isLoadingOptions, setIsLoadingOptions] = useState(false);
+  const [isLoadingOptions, setIsLoadingOptions] = useState(true);
 
   useEffect(() => {
-    if (!isOpen) return;
-
-    setName(defaultName);
-    setTerrainType(defaultTerrainType);
-    setLoadError(null);
-    setIsLoadingOptions(true);
+    let cancelled = false;
 
     fetchTerrainTypes()
       .then((options) => {
-        setTerrainOptions(options);
+        if (!cancelled) setTerrainOptions(options);
       })
       .catch((error) => {
-        setLoadError(getApiErrorMessage(error));
+        if (!cancelled) setLoadError(getApiErrorMessage(error));
       })
       .finally(() => {
-        setIsLoadingOptions(false);
+        if (!cancelled) setIsLoadingOptions(false);
       });
-  }, [defaultName, defaultTerrainType, isOpen]);
 
-  if (!isOpen) return null;
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -63,7 +62,7 @@ export default function FinishActivityModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-5">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 px-5">
       <section className="w-full max-w-sm rounded-2xl border border-neutral-300 bg-white p-5 shadow-2xl">
         <h2 className="text-xl font-bold">Terminer la sortie</h2>
 
@@ -146,5 +145,25 @@ export default function FinishActivityModal({
         </form>
       </section>
     </div>
+  );
+}
+
+export default function FinishActivityModal({
+  isOpen,
+  defaultName,
+  defaultTerrainType,
+  ...formProps
+}: FinishActivityModalProps) {
+  if (!isOpen) return null;
+
+  return (
+    <ModalPortal>
+      <FinishActivityForm
+        key={`${defaultName}-${defaultTerrainType}`}
+        defaultName={defaultName}
+        defaultTerrainType={defaultTerrainType}
+        {...formProps}
+      />
+    </ModalPortal>
   );
 }

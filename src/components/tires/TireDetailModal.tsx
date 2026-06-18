@@ -10,6 +10,7 @@ import {
   formatTireTerrain,
   formatTireUsage,
 } from "../../lib/tire-labels";
+import ModalPortal from "../ui/ModalPortal";
 
 type TireDetailModalProps = {
   tireId: number;
@@ -23,7 +24,8 @@ export default function TireDetailModal({
   const { tire, isLoading, error } = useTireModelDetail(tireId);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <ModalPortal>
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-5">
       <div className="w-full max-w-[430px] px-5">
         <section className="max-h-[85vh] overflow-y-auto rounded-2xl border border-neutral-300 bg-white p-5 shadow-2xl">
           <div className="flex items-start justify-between gap-4">
@@ -153,6 +155,7 @@ export default function TireDetailModal({
         </section>
       </div>
     </div>
+    </ModalPortal>
   );
 }
 

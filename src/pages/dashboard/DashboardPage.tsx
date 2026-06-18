@@ -1,22 +1,16 @@
-import { useEffect } from "react";
 import PageShell from "../../components/layout/PageShell";
 import ActiveTiresSection from "../../components/dashboard/ActiveTiresSection";
 import DashboardStatsGrid from "../../components/dashboard/DashboardStatsGrid";
 import RecentActivitiesSection from "../../components/dashboard/RecentActivitiesSection";
-import AlertsWidget from "../../components/tires/AlertsWidget";
 import LoyaltyCard from "../../components/loyalty/LoyaltyCard";
-import { useActivities } from "../../hooks/useActivities";
-import { getUserDisplayName, sumKilometers } from "../../lib/format";
-import { useAuth } from "../../contexts/AuthContext";
 import StravaIntegrationSection from "../../components/settings/StravaIntegrationSection";
+import { useActivities } from "../../hooks/useActivities";
+import { useAuth } from "../../contexts/AuthContext";
+import { getUserDisplayName, sumKilometers } from "../../lib/format";
 
 export default function DashboardPage() {
-  const { user, refreshUser } = useAuth();
+  const { user } = useAuth();
   const { activities, isLoading, error } = useActivities();
-
-  useEffect(() => {
-    void refreshUser();
-  }, [refreshUser]);
 
   const recentActivities = activities.slice(0, 2);
   const totalKm = sumKilometers(activities);
@@ -36,10 +30,6 @@ export default function DashboardPage() {
 
       <div className="mt-4">
         <LoyaltyCard variant="compact" />
-      </div>
-
-      <div className="mt-8">
-        <AlertsWidget />
       </div>
 
       <div className="mt-8">
