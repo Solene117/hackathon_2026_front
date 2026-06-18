@@ -8,6 +8,10 @@ type TireCurrentSectionProps = {
   model?: string | null;
   position?: string | null;
   smartTire?: boolean;
+  isActive?: boolean | null;
+  isActiveLoading?: boolean;
+  activeError?: string | null;
+  onToggleActive?: () => void;
   isLoading?: boolean;
   error?: string | null;
 };
@@ -16,14 +20,54 @@ export function TireCurrentSection({
   model,
   position,
   smartTire = false,
+  isActive = null,
+  isActiveLoading = false,
+  activeError = null,
+  onToggleActive,
   isLoading = false,
   error = null,
 }: TireCurrentSectionProps) {
   const positionLabel = formatTirePosition(position);
+  const activeLabel =
+    isActive === null ? "Indisponible" : isActive ? "Actif" : "Inactif";
 
   return (
     <section className="rounded-xl border border-neutral-300 p-5">
-      <h1 className="text-2xl font-bold">Pneu actuel</h1>
+      <div className="flex items-start justify-between gap-3">
+        <h1 className="text-2xl font-bold">Pneu actuel</h1>
+
+        {onToggleActive && (
+          <button
+            type="button"
+            role="switch"
+            aria-checked={isActive === true}
+            aria-label={
+              isActive ? "Passer le pneu en inactif" : "Passer le pneu en actif"
+            }
+            onClick={onToggleActive}
+            disabled={isActiveLoading || isActive === null}
+            className={`inline-flex shrink-0 items-center gap-2 rounded-full border px-2.5 py-1.5 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
+              isActive
+                ? "border-michelin-green/30 bg-michelin-green/10 text-michelin-green"
+                : "border-neutral-200 bg-neutral-100 text-neutral-500"
+            }`}
+          >
+            <span
+              className={`relative h-4 w-7 rounded-full transition ${
+                isActive ? "bg-michelin-green" : "bg-neutral-300"
+              }`}
+              aria-hidden="true"
+            >
+              <span
+                className={`absolute top-0.5 h-3 w-3 rounded-full bg-white shadow-sm transition ${
+                  isActive ? "left-3.5" : "left-0.5"
+                }`}
+              />
+            </span>
+            <span>{isActiveLoading ? "..." : activeLabel}</span>
+          </button>
+        )}
+      </div>
 
       <div className="mt-4 h-32 rounded-lg border border-neutral-300 bg-neutral-100" />
 
@@ -38,6 +82,12 @@ export function TireCurrentSection({
       {error && (
         <p className="mt-3 text-sm text-red-600" role="alert">
           {error}
+        </p>
+      )}
+
+      {activeError && (
+        <p className="mt-3 text-sm text-red-600" role="alert">
+          {activeError}
         </p>
       )}
 

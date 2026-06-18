@@ -36,6 +36,16 @@ export function fetchUserTireWear(id: number): Promise<UserTireWear> {
   return api<UserTireWear>(`/api/tires/mine/${id}/wear`);
 }
 
+export function updateUserTireActive(
+  id: number,
+  isActive: boolean,
+): Promise<UserTire> {
+  return api<UserTire>(`/api/tires/mine/${id}/active`, {
+    method: "PATCH",
+    body: JSON.stringify({ isActive }),
+  });
+}
+
 export function deleteUserTire(id: number): Promise<{ deleted: boolean }> {
   return api<{ deleted: boolean }>(`/api/tires/mine/${id}`, {
     method: "DELETE",
