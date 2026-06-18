@@ -18,6 +18,7 @@ import Settings from "./pages/Settings";
 import Communaute from "./pages/Communaute";
 import Recompenses from "./pages/Recompenses";
 import Parrainage from "./pages/Parrainage";
+import Evenements from "./pages/Evenements";
 
 function HomeRoute() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -133,6 +134,15 @@ function AppRoutes() {
           element={
             <RequireAuth>
               <Parrainage />
+            </RequireAuth>
+          }
+        />
+
+         <Route
+          path="/evenements"
+          element={
+            <RequireAuth>
+              <Evenements />
             </RequireAuth>
           }
         />
