@@ -1,7 +1,16 @@
+import { Info } from "lucide-react";
 import ProgressBar from "../ui/ProgressBar";
 import StatCard from "../ui/StatCard";
+import { formatKilometers } from "../../lib/format";
+import type { UserTireInfo } from "../../types/tire";
 
-export function TireCurrentSection() {
+type TireCurrentSectionProps = {
+  smartTire?: boolean;
+};
+
+export function TireCurrentSection({
+  smartTire = false,
+}: TireCurrentSectionProps) {
   return (
     <section className="rounded-xl border border-neutral-300 p-5">
       <h1 className="text-2xl font-bold">Pneu actuel</h1>
@@ -12,9 +21,11 @@ export function TireCurrentSection() {
 
       <p className="mt-1 text-sm text-neutral-700">Roue arrière</p>
 
-      <span className="mt-3 inline-block rounded-full bg-[#D4E7FA] px-3 py-2 text-xs font-medium text-[#27509B]">
-        Valve connectée active
-      </span>
+      {smartTire && (
+        <span className="mt-3 inline-block rounded-full bg-[#D4E7FA] px-3 py-2 text-xs font-medium text-[#27509B]">
+          Pneu connecté
+        </span>
+      )}
     </section>
   );
 }
@@ -61,17 +72,67 @@ export function TireHealthSection({
   );
 }
 
-export function TireUsageSection() {
+type TireUsageSectionProps = {
+  tireInfo: UserTireInfo | null;
+  isLoading?: boolean;
+  error?: string | null;
+  onShowTechnicalDetail: () => void;
+};
+  
+function formatPressure(pressure: number | null): string {
+  if (pressure == null) return "—";
+  return `${pressure.toFixed(Number.isInteger(pressure) ? 0 : 1)} bars`;
+}
+
+export function TireUsageSection({
+  tireInfo,
+  isLoading = false,
+  error = null,
+  onShowTechnicalDetail,
+}: TireUsageSectionProps) {
   return (
     <section className="rounded-xl border border-neutral-300 p-5">
       <h2 className="text-2xl font-bold">Données d’usage</h2>
 
-      <div className="mt-4 grid grid-cols-2 gap-3">
-        <StatCard variant="highlight" value="840 km" label="Distance" />
-        <StatCard variant="highlight" value="4.2 bars" label="Pression" />
-        <StatCard variant="highlight" value="Chemins" label="Terrain" />
-        <StatCard variant="highlight" value="3/semaine" label="Fréquence" />
-      </div>
+      {isLoading && <p className="mt-4 text-sm text-neutral-600">Chargement...</p>}
+
+      {error && (
+        <p className="mt-4 text-sm text-red-600" role="alert">
+          {error}
+        </p>
+      )}
+
+      {!isLoading && !error && (
+        <>
+          <div
+            className={`mt-4 grid gap-3 ${
+              tireInfo?.smartTire === true ? "grid-cols-2" : "grid-cols-1"
+            }`}
+          >
+            <StatCard
+              variant="highlight"
+              value={formatKilometers(tireInfo?.kilometers ?? null)}
+              label="Distance"
+            />
+            {tireInfo?.smartTire === true && (
+              <StatCard
+                variant="highlight"
+                value={formatPressure(tireInfo.lastPressureBar)}
+                label="Pression"
+              />
+            )}
+          </div>
+
+          <button
+            type="button"
+            onClick={onShowTechnicalDetail}
+            className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border border-[#27509B] bg-white px-4 py-3 text-sm font-bold text-[#27509B] transition hover:bg-[#D4E7FA]/40"
+          >
+            <Info size={16} />
+            Détails techniques
+          </button>
+        </>
+      )}
     </section>
   );
 }

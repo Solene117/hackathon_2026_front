@@ -61,3 +61,10 @@ export type UserTire = {
   model: string;
   health: number;
 };
+
+export type UserTireInfo = {
+  id: number;
+  kilometers: number | null;
+  lastPressureBar: number | null;
+  smartTire: boolean | null;
+};
