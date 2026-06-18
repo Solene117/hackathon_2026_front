@@ -1,3 +1,5 @@
+import { RouteIcon, Activity } from "lucide-react";
+
 type DashboardStatsGridProps = {
   totalKm: number;
   activityCount: number;
@@ -10,21 +12,27 @@ export default function DashboardStatsGrid({
   isLoading,
 }: DashboardStatsGridProps) {
   return (
-    <div className="grid grid-cols-2 gap-4">
-      <div className="rounded-lg border border-neutral-300 bg-[#D4E7FA] p-4">
-        <strong className="block text-2xl">
+    <div className="grid grid-cols-2 gap-3">
+      {/* Km parcourus — accent vert */}
+      <div className="rounded-2xl border border-michelin-green/20 bg-michelin-green/8 p-4">
+        <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-xl bg-michelin-green/15">
+          <RouteIcon size={16} className="text-michelin-green" />
+        </div>
+        <p className="text-2xl font-bold text-michelin-green">
           {isLoading ? "…" : Math.round(totalKm)}
-        </strong>
-        <span className="mt-2 block text-sm text-neutral-700">km parcourus</span>
+        </p>
+        <p className="mt-1 text-xs font-medium text-neutral-500">km parcourus</p>
       </div>
 
-      <div className="rounded-lg border border-neutral-300 bg-[#D4E7FA] p-4">
-        <strong className="block text-2xl">
+      {/* Activités — accent bleu */}
+      <div className="rounded-2xl border border-michelin-blue/20 bg-michelin-blue/8 p-4">
+        <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-xl bg-michelin-blue/15">
+          <Activity size={16} className="text-michelin-blue" />
+        </div>
+        <p className="text-2xl font-bold text-michelin-blue">
           {isLoading ? "…" : activityCount}
-        </strong>
-        <span className="mt-2 block text-sm text-neutral-700">
-          activités enregistrées
-        </span>
+        </p>
+        <p className="mt-1 text-xs font-medium text-neutral-500">activités enregistrées</p>
       </div>
     </div>
   );

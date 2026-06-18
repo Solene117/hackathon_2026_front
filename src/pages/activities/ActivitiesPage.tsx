@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus, RefreshCw } from "lucide-react";
 import PageShell from "../../components/layout/PageShell";
+import SectionHeader from "../../components/ui/SectionHeader";
 import ActivityCard from "../../components/activities/ActivityCard";
 import ErrorAlert from "../../components/ui/ErrorAlert";
 import EmptyState from "../../components/ui/EmptyState";
@@ -9,6 +10,7 @@ import LoadingMessage from "../../components/ui/LoadingMessage";
 import { startActivity } from "../../api/activities";
 import { useActivities } from "../../hooks/useActivities";
 import { getApiErrorMessage } from "../../lib/errors";
+import tireLifeIcon from "../../assets/tire_life.svg";
 
 export default function ActivitiesPage() {
   const navigate = useNavigate();
@@ -38,17 +40,30 @@ export default function ActivitiesPage() {
   }
 
   return (
-    <PageShell title="MICHELIN Ride Companion">
-      <h1 className="mb-5 text-2xl font-bold">Mes activités</h1>
+    <PageShell mainClassName="p-5 pb-28">
+      <SectionHeader
+        title="Mes activités"
+        subtitle="Suivez vos sorties et synchronisez Strava"
+        icon={
+          <img
+            src={tireLifeIcon}
+            alt=""
+            aria-hidden
+            className="h-5 w-5"
+            style={{ filter: "brightness(0) saturate(100%) invert(54%) sepia(97%) saturate(401%) hue-rotate(47deg)" }}
+          />
+        }
+      />
 
+      {/* Actions */}
       <div className="mb-5 grid grid-cols-2 gap-3">
         <button
           type="button"
           onClick={() => void handleNewActivity()}
           disabled={isStarting}
-          className="flex items-center justify-center gap-2 rounded-xl bg-[#27509B] px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#00205B] disabled:opacity-60"
+          className="flex items-center justify-center gap-2 rounded-full bg-michelin-green px-4 py-3 text-sm font-bold text-white shadow-sm shadow-green-200/60 transition hover:opacity-90 disabled:opacity-50 active:scale-[0.98]"
         >
-          <Plus size={18} />
+          <Plus size={17} />
           {isStarting ? "Création..." : "Nouvelle sortie"}
         </button>
 
@@ -56,9 +71,9 @@ export default function ActivitiesPage() {
           type="button"
           onClick={() => void handleRefresh()}
           disabled={isRefreshing}
-          className="flex items-center justify-center gap-2 rounded-xl border border-[#27509B] px-4 py-3 text-sm font-semibold text-[#27509B] hover:bg-neutral-50 disabled:opacity-60"
+          className="flex items-center justify-center gap-2 rounded-full border border-neutral-200 bg-white px-4 py-3 text-sm font-semibold text-neutral-700 transition hover:bg-neutral-50 disabled:opacity-50 active:scale-[0.98]"
         >
-          <RefreshCw size={18} />
+          <RefreshCw size={17} className={isRefreshing ? "animate-spin" : ""} />
           {isRefreshing ? "Sync..." : "Sync Strava"}
         </button>
       </div>
@@ -67,7 +82,8 @@ export default function ActivitiesPage() {
         <ErrorAlert message={error ?? actionError ?? ""} className="mb-4" />
       )}
 
-      <section className="space-y-4 rounded-xl border border-neutral-300 p-5">
+      {/* Liste des activités */}
+      <div className="space-y-3">
         {isLoading && <LoadingMessage />}
 
         {!isLoading && activities.length === 0 && (
@@ -77,7 +93,7 @@ export default function ActivitiesPage() {
         {activities.map((activity) => (
           <ActivityCard key={activity.id} activity={activity} />
         ))}
-      </section>
+      </div>
     </PageShell>
   );
 }
