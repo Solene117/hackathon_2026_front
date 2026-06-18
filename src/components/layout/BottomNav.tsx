@@ -16,8 +16,10 @@ type NavItemDef = {
 export default function BottomNav() {
   const { isAuthenticated } = useAuth();
 
+  if (!isAuthenticated) return null;
+
   const items: NavItemDef[] = [
-    { id: "home", label: "Accueil", to: isAuthenticated ? "/dashboard" : "/", kind: "lucide-home" },
+    { id: "home", label: "Accueil", to: "/dashboard", kind: "lucide-home" },
     { id: "find", label: "Trouver", to: "/trouver-pneu", kind: "svg-find" },
     { id: "tires", label: "Mes pneus", to: "/mes-pneus", kind: "svg-tires" },
     { id: "activities", label: "Activités", to: "/activites", kind: "svg-activities" },

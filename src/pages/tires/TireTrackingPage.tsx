@@ -5,7 +5,6 @@ import { deleteUserTire, updateUserTireActive } from "../../api/tires";
 import PageShell from "../../components/layout/PageShell";
 import ActiveTireConflictModal from "../../components/tires/ActiveTireConflictModal";
 import ConfirmTireDeleteModal from "../../components/tires/ConfirmTireDeleteModal";
-import RecommendationModal from "../../components/tires/RecommendationModal";
 import TireDetailModal from "../../components/tires/TireDetailModal";
 import {
   TireCurrentSection,
@@ -45,7 +44,6 @@ export default function TireTrackingPage() {
       : undefined;
   const displayedIsActive =
     currentTire?.isActive ?? null;
-  const [showRecommendation, setShowRecommendation] = useState(false);
   const [showTireDetail, setShowTireDetail] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -117,13 +115,6 @@ export default function TireTrackingPage() {
 
   return (
     <>
-      {showRecommendation && (
-        <RecommendationModal
-          tireImage={tireInfo?.tireImage}
-          onClose={() => setShowRecommendation(false)}
-        />
-      )}
-
       {showTireDetail && validTireId !== null && (
         <TireDetailModal
           tireId={validTireId}
@@ -163,7 +154,6 @@ export default function TireTrackingPage() {
           healthStatus={tireWear?.healthStatus ?? null}
           isLoading={isTireWearLoading}
           error={tireWearError}
-          onShowRecommendation={() => setShowRecommendation(true)}
         />
 
         <TireUsageSection

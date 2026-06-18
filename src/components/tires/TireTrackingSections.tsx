@@ -116,7 +116,6 @@ type TireHealthSectionProps = {
   healthStatus: UserTireWear["healthStatus"];
   isLoading?: boolean;
   error?: string | null;
-  onShowRecommendation: () => void;
 };
 
 export function TireHealthSection({
@@ -124,7 +123,6 @@ export function TireHealthSection({
   healthStatus,
   isLoading = false,
   error = null,
-  onShowRecommendation,
 }: TireHealthSectionProps) {
   const progressValue = clampProgressValue(healthScore);
 
@@ -155,14 +153,6 @@ export function TireHealthSection({
       <p className="mt-4 text-sm text-neutral-600">
         Estimée à partir de vos données d’usage et des données remontées.
       </p>
-
-      <button
-        type="button"
-        onClick={onShowRecommendation}
-        className="mt-5 w-full rounded-lg bg-[#27509B] px-4 py-3 text-sm font-bold text-white hover:bg-[#1a3d7a]"
-      >
-        Voir recommandation
-      </button>
     </section>
   );
 }

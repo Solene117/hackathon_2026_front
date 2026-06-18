@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { Loader2, Sparkles } from "lucide-react";
 import Chip from "../ui/Chip";
 import ErrorAlert from "../ui/ErrorAlert";
@@ -130,12 +129,6 @@ export function RecommendedTiresList({
           </li>
         ))}
       </ul>
-
-      <Link to="/retailers">
-        <button className="mt-5 w-full rounded-lg bg-[#27509B] px-4 py-3 text-sm font-bold text-white hover:bg-[#1a3d7a]">
-          Voir les revendeurs
-        </button>
-      </Link>
     </section>
   );
 }

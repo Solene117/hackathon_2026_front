@@ -23,7 +23,7 @@ export default function TireDetailModal({
   return (
     <ModalPortal>
       <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-5">
-      <div className="w-full max-w-[430px] px-5">
+      <div className="w-full">
         <section className="max-h-[85vh] overflow-y-auto rounded-2xl border border-neutral-300 bg-white p-5 shadow-2xl">
           <div className="flex items-start justify-between gap-4">
             <h1 className="text-2xl font-bold leading-tight">
