@@ -9,16 +9,19 @@ import LoyaltyCard from "../components/LoyaltyCard";
 import { useActivities } from "../hooks/useActivities";
 import { getUserDisplayName, sumKilometers } from "../lib/format";
 import { useAuth } from "../contexts/AuthContext";
+import { useUserTires } from "../hooks/useUserTires";
 
 export default function Dashboard() {
   const { user, refreshUser } = useAuth();
   const { activities, isLoading, error } = useActivities();
+  const { tires, isLoading: isTireLoading, error: tiresError } = useUserTires();
 
   useEffect(() => {
     void refreshUser();
   }, [refreshUser]);
   const recentActivities = activities.slice(0, 2);
   const totalKm = sumKilometers(activities);
+  const activeTires = tires.filter((tire) => tire.isActive === true);
   const hasStravaActivities = activities.some(
     (activity) => activity.source === "STRAVA",
   );
@@ -106,15 +109,41 @@ export default function Dashboard() {
           ))}
         </section>
 
-        <section className="mt-8 rounded-xl border border-neutral-300 p-5">
-          <h2 className="mb-4 text-2xl font-bold">Pneus actifs</h2>
-          <p className="mb-4 text-sm text-neutral-600">
-            La gestion des pneus sera disponible prochainement.
+        {isTireLoading && (
+          <p className="mt-8 text-sm text-neutral-600">Chargement...</p>
+        )}
+
+        {tiresError && (
+          <p className="mt-8 text-sm text-red-600" role="alert">
+            {tiresError}
           </p>
-          <div className="space-y-4">
-            <TireCard name="Michelin Power Gravel" health={72} />
-          </div>
-        </section>
+        )}
+
+        {!isTireLoading &&
+          !tiresError &&
+          tires.length > 0 &&
+          activeTires.length === 0 && (
+            <p className="mt-8 text-sm text-neutral-600">
+              Aucun pneu actif pour le moment.
+            </p>
+          )}
+
+        {!tiresError && !isTireLoading && activeTires.length > 0 && (
+          <section className="mt-8 rounded-xl border border-neutral-300 p-5">
+            <h2 className="mb-4 text-2xl font-bold">Pneus actifs</h2>
+            <div className="space-y-4">
+              {activeTires.map((tire) => (
+                <TireCard
+                  key={tire.id}
+                  userTireId={tire.id}
+                  name={tire.model}
+                  status={tire.isActive ? "Actif" : "Inactif"}
+                  health={tire.health}
+                />
+              ))}
+            </div>
+          </section>
+        )}
       </main>
     </div>
   );
