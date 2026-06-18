@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import ModalPortal from "../ui/ModalPortal";
 import { resolveAlertUserTireId } from "../../lib/alert-utils";
 import {
-  selectUncheckedAlerts,
+  selectVisibleAlerts,
   useAlertsStore,
 } from "../../stores/alertsStore";
 import { useUserTiresStore } from "../../stores/userTiresStore";
@@ -13,29 +13,31 @@ export default function AlertsModal() {
   const navigate = useNavigate();
   const {
     alerts,
+    dismissedAlertIds,
     isLoading,
     error,
     isModalOpen,
     checkingId,
     closeModal,
+    dismissAlert,
     markAsRead,
   } = useAlertsStore();
   const tires = useUserTiresStore((state) => state.tires);
 
   if (!isModalOpen) return null;
 
-  const uncheckedAlerts = selectUncheckedAlerts(alerts);
+  const visibleAlerts = selectVisibleAlerts(alerts, dismissedAlertIds);
 
-  async function handleAlertClick(alert: Alert) {
+  function handleAlertClick(alert: Alert) {
+    dismissAlert(alert.id);
     const userTireId = resolveAlertUserTireId(alert, tires);
+    closeModal();
+
     if (userTireId == null) {
-      closeModal();
       navigate("/mes-pneus");
       return;
     }
 
-    await markAsRead(alert.id);
-    closeModal();
     navigate(`/suivi-pneu/${userTireId}`);
   }
 
@@ -53,11 +55,11 @@ export default function AlertsModal() {
         <div className="flex items-center justify-between border-b border-neutral-100 px-5 py-4">
           <div>
             <h2 className="text-lg font-bold text-neutral-900">Alertes</h2>
-            {!isLoading && uncheckedAlerts.length > 0 && (
+            {!isLoading && visibleAlerts.length > 0 && (
               <p className="text-xs text-neutral-500">
-                {uncheckedAlerts.length} alerte
-                {uncheckedAlerts.length > 1 ? "s" : ""} non lue
-                {uncheckedAlerts.length > 1 ? "s" : ""}
+                {visibleAlerts.length} alerte
+                {visibleAlerts.length > 1 ? "s" : ""} non lue
+                {visibleAlerts.length > 1 ? "s" : ""}
               </p>
             )}
           </div>
@@ -83,7 +85,7 @@ export default function AlertsModal() {
             </p>
           )}
 
-          {!isLoading && !error && uncheckedAlerts.length === 0 && (
+          {!isLoading && !error && visibleAlerts.length === 0 && (
             <div className="py-10 text-center">
               <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-michelin-green/10">
                 <Check size={22} className="text-michelin-green" />
@@ -97,9 +99,9 @@ export default function AlertsModal() {
             </div>
           )}
 
-          {!isLoading && uncheckedAlerts.length > 0 && (
+          {!isLoading && visibleAlerts.length > 0 && (
             <ul className="space-y-3">
-              {uncheckedAlerts.map((alert) => (
+              {visibleAlerts.map((alert) => (
                 <li key={alert.id}>
                   <div className="rounded-2xl border border-amber-100 bg-amber-50/60 p-4 transition hover:border-amber-200 hover:bg-amber-50">
                     <div className="flex items-start gap-3">

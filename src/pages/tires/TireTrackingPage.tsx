@@ -11,6 +11,7 @@ import {
   TireHealthSection,
   TireUsageSection,
 } from "../../components/tires/TireTrackingSections";
+import TireAlertsSection from "../../components/tires/TireAlertsSection";
 import { useUserTireInfo } from "../../hooks/useUserTireInfo";
 import { useUserTireWear } from "../../hooks/useUserTireWear";
 import { useUserTires } from "../../hooks/useUserTires";
@@ -148,6 +149,10 @@ export default function TireTrackingPage() {
           isLoading={isTireWearLoading}
           error={tireWearError}
         />
+
+        {validTireId !== null && (
+          <TireAlertsSection tireId={validTireId} />
+        )}
 
         <TireHealthSection
           healthScore={tireWear?.healthScore ?? null}

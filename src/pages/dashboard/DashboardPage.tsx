@@ -65,10 +65,6 @@ export default function DashboardPage() {
       </div>
 
       <div className="mt-8">
-        <h2 className="mb-4 text-xl font-bold">Activités récentes</h2>
-      </div>
-
-      <div className="mt-8">
         <RecentActivitiesSection
           activities={recentActivities}
           isLoading={isLoading}

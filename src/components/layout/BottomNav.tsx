@@ -18,8 +18,6 @@ export default function BottomNav() {
 
   if (isLoading || !isAuthenticated) return null;
 
-  if (!isAuthenticated) return null;
-
   const items: NavItemDef[] = [
     { id: "home", label: "Accueil", to: "/dashboard", kind: "lucide-home" },
     { id: "find", label: "Trouver", to: "/trouver-pneu", kind: "svg-find" },
@@ -30,14 +28,14 @@ export default function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-4 left-1/2 z-50 flex h-[62px] w-[calc(100%-32px)] max-w-[400px] -translate-x-1/2 items-end justify-around rounded-full border border-white/60 bg-white/92 px-3 pb-2 backdrop-blur-xl"
+      className="fixed bottom-4 left-1/2 z-50 flex h-[62px] w-[calc(100%-32px)] max-w-[400px] -translate-x-1/2 items-end justify-around rounded-full border border-white/60 bg-white/92 px-3 pb-1 backdrop-blur-xl"
       style={{
         boxShadow:
           "0 8px 32px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06), 0 0 0 1px rgba(255,255,255,0.5) inset",
       }}
     >
       {items.map(({ id, label, to, kind }) => (
-        <NavLink key={id} to={to} className="flex h-full flex-col items-center justify-end pb-1.5">
+        <NavLink key={id} to={to} className="flex h-full flex-col items-center justify-end gap-1.5 pb-1">
           {({ isActive }) => (
             <>
               {/* Bulle icône — sort du haut de la nav quand active */}
@@ -45,7 +43,7 @@ export default function BottomNav() {
                 className={`flex items-center justify-center rounded-full transition-all duration-[380ms] ${
                   isActive
                     ? "-translate-y-3 bg-michelin-green p-[10px] shadow-[0_6px_18px_rgba(132,189,0,0.45)]"
-                    : "mb-0.5"
+                    : ""
                 }`}
                 style={
                   isActive
@@ -100,7 +98,7 @@ export default function BottomNav() {
               <span
                 className={`leading-none transition-all duration-200 ${
                   isActive
-                    ? "-translate-y-2 text-[10px] font-extrabold tracking-tight text-michelin-green"
+                    ? "-translate-y-0.5 text-[10px] font-extrabold tracking-tight text-michelin-green"
                     : "text-[9.5px] font-medium text-neutral-400"
                 }`}
               >
