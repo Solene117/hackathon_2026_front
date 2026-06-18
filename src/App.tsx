@@ -147,6 +147,24 @@ function AppRoutes() {
             </RequireAuth>
           }
         />
+
+        <Route
+          path="/activites/:id"
+          element={
+            <RequireAuth>
+              <ActivityPage />
+            </RequireAuth>
+          }
+        />
+
+        <Route
+          path="/guide"
+          element={
+            <RequireAuth>
+              <GuidePage />
+            </RequireAuth>
+          }
+        />
       </Route>
 
       <Route
@@ -154,24 +172,6 @@ function AppRoutes() {
         element={
           <RequireAuth>
             <RecommendationPage />
-          </RequireAuth>
-        }
-      />
-
-      <Route
-        path="/activites/:id"
-        element={
-          <RequireAuth>
-            <ActivityPage />
-          </RequireAuth>
-        }
-      />
-
-      <Route
-        path="/guide"
-        element={
-          <RequireAuth>
-            <GuidePage />
           </RequireAuth>
         }
       />

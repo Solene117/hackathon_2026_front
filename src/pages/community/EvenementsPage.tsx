@@ -7,10 +7,10 @@ import EventConfirmModal from "../../components/community/EventConfirmModal";
 import type { Event } from "../../types/events";
 
 export default function EvenementsPage() {
-  const { events, registrations, loading, participate } = useEvents();
+  const { events, registrations, isLoading, participate } = useEvents();
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <PageShell title="Événements" mainClassName="p-5 pb-24">
         <p>Chargement...</p>

@@ -1,5 +1,5 @@
-import { ChevronLeft, Pause, Play, Trash2 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { ArrowLeft, MapPin, Mountain, Pause, Play, Timer, Trash2, TrendingUp } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ConfirmActivityDeleteModal from "./ConfirmActivityDeleteModal";
 import FinishActivityModal from "./FinishActivityModal";
@@ -9,21 +9,35 @@ import {
   formatElevationMeters,
   formatSpeedKmh,
 } from "../../lib/activity-metrics";
-import { useActivityRecording } from "../../hooks/useActivityRecording";
+import { formatTerrain } from "../../lib/format";
+import { useRecordingStore } from "../../stores/recordingStore";
 import type { ActivityDetail, TerrainType } from "../../types/activity";
 
 type ActivityRecordingProps = {
   initialActivity?: ActivityDetail;
 };
 
-function MetricValue({ children }: { children: React.ReactNode }) {
+/** Tile de stat secondaire */
+function StatTile({
+  icon,
+  value,
+  label,
+}: {
+  icon: React.ReactNode;
+  value: string;
+  label: string;
+}) {
   return (
-    <p className="text-5xl font-bold tracking-tight text-black">{children}</p>
+    <div className="flex flex-col gap-1.5 rounded-2xl bg-neutral-50 px-4 py-3">
+      <span className="text-neutral-400">{icon}</span>
+      <span className="text-2xl font-black tabular-nums leading-none text-neutral-900">
+        {value}
+      </span>
+      <span className="text-[11px] font-semibold uppercase tracking-wide text-neutral-400">
+        {label}
+      </span>
+    </div>
   );
-}
-
-function MetricLabel({ children }: { children: React.ReactNode }) {
-  return <p className="mt-1 text-sm text-neutral-500">{children}</p>;
 }
 
 export default function ActivityRecording({
@@ -35,23 +49,8 @@ export default function ActivityRecording({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showFinishModal, setShowFinishModal] = useState(false);
 
-  const handleExit = useCallback(() => {
-    navigate("/activites");
-  }, [navigate]);
-
-  useEffect(() => {
-    if (!Number.isFinite(activityId)) {
-      navigate("/activites", { replace: true });
-    }
-  }, [activityId, navigate]);
-
-  const recording = useActivityRecording({
-    activityId,
-    onExit: handleExit,
-    initialActivity,
-  });
-
   const {
+    attach,
     isLoading,
     phase,
     elapsedSeconds,
@@ -65,177 +64,219 @@ export default function ActivityRecording({
     resume,
     finish,
     remove,
-  } = recording;
+  } = useRecordingStore();
 
-  function openFinishModal() {
-    setShowFinishModal(true);
-  }
-
-  function closeFinishModal() {
-    if (!isSubmitting) {
-      setShowFinishModal(false);
+  useEffect(() => {
+    if (!Number.isFinite(activityId)) {
+      navigate("/activites", { replace: true });
+      return;
     }
-  }
+    void attach(activityId, initialActivity);
+  }, [activityId, attach, initialActivity, navigate]);
 
-  function handleConfirmFinish(data: {
+  async function handleConfirmFinish(data: {
     name: string;
     terrainType: TerrainType;
   }) {
-    void finish(data);
+    const success = await finish(data);
+    if (success) navigate("/activites", { replace: true });
   }
 
-  function openDeleteModal() {
-    setShowDeleteModal(true);
+  async function handleConfirmDelete() {
+    const success = await remove();
+    if (success) navigate("/activites", { replace: true });
   }
 
-  function closeDeleteModal() {
-    if (!isSubmitting) {
-      setShowDeleteModal(false);
-    }
-  }
-
-  function handleConfirmDelete() {
-    void remove();
-  }
-
-  if (!Number.isFinite(activityId)) {
-    return null;
-  }
+  if (!Number.isFinite(activityId)) return null;
 
   if (isLoading) {
     return (
-      <div className="mx-auto flex h-screen max-w-[430px] items-center justify-center bg-white">
-        <p className="text-sm text-neutral-600">Chargement...</p>
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-michelin-blue border-t-transparent" />
+          <p className="text-sm text-neutral-500">Chargement…</p>
+        </div>
       </div>
     );
   }
 
+  const isRecording = phase === "recording";
+  const isPreparing = phase === "preparing";
+  const isPaused = phase === "paused";
+
   return (
-    <div className="mx-auto flex h-screen max-w-[430px] flex-col bg-white">
-      <header className="flex items-center justify-between border-b border-neutral-200 px-4 py-4">
-        <button
-          type="button"
-          onClick={openDeleteModal}
-          className="flex h-10 w-10 items-center justify-center rounded-full text-neutral-700 hover:bg-neutral-100"
-          aria-label="Retour"
-        >
-          <ChevronLeft size={28} />
-        </button>
+    <div className="flex min-h-[calc(100dvh-140px)] flex-col bg-app-bg">
 
-        <p className="text-2xl font-semibold tabular-nums text-black">
-          {formatElapsedTime(elapsedSeconds)}
-        </p>
+      {/* ── Header ── */}
+      <div className="px-4 pb-2 pt-4">
+        <div className="flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => navigate("/activites")}
+            className="flex items-center gap-1.5 text-sm font-semibold text-neutral-500 transition hover:text-neutral-800"
+            aria-label="Quitter l'écran (l'enregistrement continue)"
+          >
+            <ArrowLeft size={18} />
+            Retour
+          </button>
 
-        <div className="h-10 w-10" />
-      </header>
-
-      <main className="flex flex-1 flex-col items-center justify-center px-6">
-        <div className="text-center">
-          <MetricValue>{formatSpeedKmh(metrics.speedKmh)}</MetricValue>
-          <MetricLabel>Vitesse (km/h)</MetricLabel>
+          {/* Badge état */}
+          <span
+            className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wider ${
+              isRecording
+                ? "bg-michelin-green/15 text-michelin-green"
+                : isPaused
+                  ? "bg-amber-100 text-amber-600"
+                  : "bg-neutral-100 text-neutral-500"
+            }`}
+          >
+            {isRecording && (
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-michelin-green" />
+            )}
+            {isRecording ? "En cours" : isPaused ? "En pause" : "Prêt"}
+          </span>
         </div>
 
-        <div className="mt-16 grid w-full max-w-xs grid-cols-2 gap-x-8 gap-y-10">
-          <div className="text-center">
-            <MetricValue>{formatDistanceKm(metrics.distanceKm)}</MetricValue>
-            <MetricLabel>Distance (km)</MetricLabel>
-          </div>
+        {/* Nom + terrain */}
+        <div className="mt-3">
+          <h1 className="text-xl font-black leading-tight text-neutral-900">
+            {activityName}
+          </h1>
+          <span className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-neutral-400">
+            <MapPin size={12} />
+            {formatTerrain(activityTerrainType)}
+          </span>
+        </div>
+      </div>
 
-          <div className="text-center">
-            <MetricValue>
-              {formatElevationMeters(metrics.elevationGainM)}
-            </MetricValue>
-            <MetricLabel>Dénivelé (m)</MetricLabel>
-          </div>
+      {/* ── Zone centrale ── */}
+      <main className="flex flex-1 flex-col justify-between px-5 py-4">
 
-          <div className="col-span-2 text-center">
-            <MetricValue>
-              {formatElevationMeters(metrics.currentElevationM)}
-            </MetricValue>
-            <MetricLabel>Altitude (m)</MetricLabel>
+        {/* Chrono + vitesse hero */}
+        <div className="flex flex-col items-center py-6">
+          {/* Chrono */}
+          <span className="tabular-nums text-5xl font-black tracking-tighter text-neutral-900">
+            {formatElapsedTime(elapsedSeconds)}
+          </span>
+          <span className="mt-1 text-xs font-semibold uppercase tracking-widest text-neutral-400">
+            Durée
+          </span>
+
+          {/* Vitesse — héros */}
+          <div className="mt-8 flex flex-col items-center">
+            <span
+              className={`tabular-nums text-[88px] font-black leading-none tracking-tighter transition-colors duration-500 ${
+                isRecording ? "text-michelin-green" : "text-neutral-300"
+              }`}
+            >
+              {formatSpeedKmh(metrics.speedKmh)}
+            </span>
+            <span className="mt-1 text-sm font-semibold uppercase tracking-widest text-neutral-400">
+              km/h
+            </span>
           </div>
+        </div>
+
+        {/* Tiles stats secondaires */}
+        <div className="grid grid-cols-3 gap-2.5">
+          <StatTile
+            icon={<MapPin size={16} />}
+            value={formatDistanceKm(metrics.distanceKm)}
+            label="km"
+          />
+          <StatTile
+            icon={<TrendingUp size={16} />}
+            value={formatElevationMeters(metrics.elevationGainM)}
+            label="D+ (m)"
+          />
+          <StatTile
+            icon={<Mountain size={16} />}
+            value={formatElevationMeters(metrics.currentElevationM)}
+            label="Alt (m)"
+          />
         </div>
 
         {error && (
-          <p className="mt-8 text-center text-sm text-red-600" role="alert">
+          <p className="mt-3 text-center text-sm text-red-600" role="alert">
             {error}
           </p>
         )}
       </main>
 
-      <footer className="space-y-3 border-t border-neutral-200 px-5 py-6">
-        {phase === "preparing" && (
+      {/* ── Footer actions ── */}
+      <div className="border-t border-neutral-100 bg-white px-5 pb-6 pt-4">
+        {isPreparing && (
           <button
             type="button"
             onClick={start}
             disabled={isSubmitting}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#27509B] px-4 py-3 text-base font-semibold text-white hover:bg-[#00205B] disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-2.5 rounded-2xl bg-michelin-green py-4 text-base font-bold text-white shadow-lg shadow-michelin-green/30 transition hover:brightness-105 active:scale-[0.98] disabled:opacity-60"
           >
-            <Play size={20} />
-            Démarrer
+            <Play size={22} fill="white" />
+            Démarrer la sortie
           </button>
         )}
 
-        {phase === "recording" && (
+        {isRecording && (
           <button
             type="button"
             onClick={pause}
             disabled={isSubmitting}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#27509B] px-4 py-3 text-base font-semibold text-white hover:bg-[#00205B] disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-2.5 rounded-2xl bg-michelin-blue py-4 text-base font-bold text-white shadow-md transition hover:brightness-105 active:scale-[0.98] disabled:opacity-60"
           >
-            <Pause size={20} />
+            <Pause size={22} fill="white" />
             Pause
           </button>
         )}
 
-        {phase === "paused" && (
-          <>
+        {isPaused && (
+          <div className="space-y-2.5">
+            <div className="grid grid-cols-2 gap-2.5">
+              <button
+                type="button"
+                onClick={resume}
+                disabled={isSubmitting}
+                className="flex items-center justify-center gap-2 rounded-2xl bg-michelin-green py-3.5 text-sm font-bold text-white shadow-md transition hover:brightness-105 active:scale-[0.98] disabled:opacity-60"
+              >
+                <Play size={18} fill="white" />
+                Reprendre
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowFinishModal(true)}
+                disabled={isSubmitting}
+                className="flex items-center justify-center gap-2 rounded-2xl border-2 border-michelin-blue bg-white py-3.5 text-sm font-bold text-michelin-blue transition hover:bg-michelin-blue-light-01/40 active:scale-[0.98] disabled:opacity-60"
+              >
+                <Timer size={18} />
+                Terminer
+              </button>
+            </div>
             <button
               type="button"
-              onClick={resume}
+              onClick={() => setShowDeleteModal(true)}
               disabled={isSubmitting}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#27509B] px-4 py-3 text-base font-semibold text-white hover:bg-[#00205B] disabled:opacity-60"
+              className="flex w-full items-center justify-center gap-2 py-2 text-sm font-semibold text-red-400 transition hover:text-red-600 disabled:opacity-60"
             >
-              <Play size={20} />
-              Reprendre
+              <Trash2 size={16} />
+              Abandonner la sortie
             </button>
-
-            <button
-              type="button"
-              onClick={openFinishModal}
-              disabled={isSubmitting}
-              className="w-full rounded-xl border border-[#27509B] px-4 py-3 text-base font-semibold text-[#27509B] hover:bg-neutral-50 disabled:opacity-60"
-            >
-              Terminer
-            </button>
-
-            <button
-              type="button"
-              onClick={openDeleteModal}
-              disabled={isSubmitting}
-              className="flex w-full items-center justify-center gap-2 py-2 text-base font-semibold text-red-600 disabled:opacity-60"
-            >
-              <Trash2 size={18} />
-              Supprimer
-            </button>
-          </>
+          </div>
         )}
-      </footer>
+      </div>
 
       <ConfirmActivityDeleteModal
         isOpen={showDeleteModal}
         isSubmitting={isSubmitting}
-        onConfirm={handleConfirmDelete}
-        onCancel={closeDeleteModal}
+        onConfirm={() => void handleConfirmDelete()}
+        onCancel={() => !isSubmitting && setShowDeleteModal(false)}
       />
-
       <FinishActivityModal
         isOpen={showFinishModal}
         isSubmitting={isSubmitting}
         defaultName={activityName}
         defaultTerrainType={activityTerrainType}
         onSubmit={handleConfirmFinish}
-        onCancel={closeFinishModal}
+        onCancel={() => !isSubmitting && setShowFinishModal(false)}
       />
     </div>
   );

@@ -8,6 +8,7 @@ import { useActivities } from "../../hooks/useActivities";
 import { useAuth } from "../../contexts/AuthContext";
 import { getUserDisplayName, sumKilometers } from "../../lib/format";
 import UpcomingEventCard from "../../components/community/UpcomingEventCard";
+import LoadingMessage from "../../components/ui/LoadingMessage";
 import { useEvents } from "../../hooks/useEvents";
 
 export default function DashboardPage() {
@@ -18,7 +19,7 @@ export default function DashboardPage() {
   const totalKm = sumKilometers(activities);
   const isStravaLinked = user?.stravaLinked === true;
 
-  const { registrations } = useEvents();
+  const { registrations, isLoading: isEventsLoading } = useEvents();
 
   const nextEvent = registrations[0];
 
@@ -51,13 +52,15 @@ export default function DashboardPage() {
       </div>
 
       <div className="mt-8">
-        {nextEvent ? (
+        {isEventsLoading && <LoadingMessage />}
+        {!isEventsLoading && nextEvent && (
           <UpcomingEventCard
             title={nextEvent.event.title}
             location={nextEvent.event.location}
             daysRemaining={getDaysUntil(nextEvent.event.date)}
           />
-        ) : (
+        )}
+        {!isEventsLoading && !nextEvent && (
           <p className="text-sm text-neutral-600">
             Vous n'êtes inscrit à aucun événement pour le moment.
           </p>

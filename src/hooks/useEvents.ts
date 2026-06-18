@@ -1,43 +1,19 @@
-import { useEffect, useState } from "react";
-import {
-  fetchEvents,
-  fetchMyEventRegistrations,
-  registerToEvent,
-} from "../api/events";
-import type { Event, EventRegistration } from "../types/events";
+import { useEventsStore } from "../stores/eventsStore";
 
 export function useEvents() {
-  const [events, setEvents] = useState<Event[]>([]);
-  const [registrations, setRegistrations] = useState<EventRegistration[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  async function loadEvents() {
-    setLoading(true);
-
-    const [eventsData, registrationsData] = await Promise.all([
-      fetchEvents(),
-      fetchMyEventRegistrations(),
-    ]);
-
-    setEvents(eventsData);
-    setRegistrations(registrationsData);
-    setLoading(false);
-  }
-
-  async function participate(eventId: string) {
-    const registration = await registerToEvent(eventId);
-
-    setRegistrations((prev) => [...prev, registration]);
-  }
-
-  useEffect(() => {
-    void loadEvents();
-  }, []);
+  const events = useEventsStore((state) => state.events);
+  const registrations = useEventsStore((state) => state.registrations);
+  const isLoading = useEventsStore((state) => state.isLoading);
+  const error = useEventsStore((state) => state.error);
+  const fetchEvents = useEventsStore((state) => state.fetchEvents);
+  const participate = useEventsStore((state) => state.participate);
 
   return {
     events,
     registrations,
-    loading,
+    isLoading,
+    error,
     participate,
+    refresh: () => fetchEvents({ force: true }),
   };
 }
