@@ -2,26 +2,12 @@ import { Link, useSearchParams } from "react-router-dom";
 import PageShell from "../../components/layout/PageShell";
 import StravaIntegrationSection from "../../components/settings/StravaIntegrationSection";
 import StravaStatusMessage from "../../components/settings/StravaStatusMessage";
-
-const STRAVA_MESSAGES: Record<string, { title: string; body: string }> = {
-  connected: {
-    title: "Strava connecté",
-    body: "Vos activités seront synchronisées automatiquement.",
-  },
-  denied: {
-    title: "Connexion refusée",
-    body: "Vous avez annulé la liaison avec Strava.",
-  },
-  error: {
-    title: "Erreur de connexion",
-    body: "Impossible de finaliser la liaison Strava. Réessayez.",
-  },
-};
+import { STRAVA_STATUS_MESSAGES } from "../../lib/strava-status";
 
 export default function SettingsPage() {
   const [params] = useSearchParams();
   const stravaStatus = params.get("strava");
-  const message = stravaStatus ? STRAVA_MESSAGES[stravaStatus] : null;
+  const message = stravaStatus ? STRAVA_STATUS_MESSAGES[stravaStatus] : null;
 
   return (
     <PageShell title="Paramètres" mainClassName="space-y-5 p-5 pb-24">

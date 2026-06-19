@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Plus, RefreshCw } from "lucide-react";
 import PageShell from "../../components/layout/PageShell";
 import SectionHeader from "../../components/ui/SectionHeader";
@@ -7,18 +7,32 @@ import ActivityCard from "../../components/activities/ActivityCard";
 import ErrorAlert from "../../components/ui/ErrorAlert";
 import EmptyState from "../../components/ui/EmptyState";
 import LoadingMessage from "../../components/ui/LoadingMessage";
+import StravaStatusMessage from "../../components/settings/StravaStatusMessage";
 import { startActivity } from "../../api/activities";
+import { useAuth } from "../../contexts/AuthContext";
 import { useActivities } from "../../hooks/useActivities";
 import { invalidateAfterActivityChange } from "../../stores";
 import { getApiErrorMessage } from "../../lib/errors";
+import { STRAVA_STATUS_MESSAGES } from "../../lib/strava-status";
 import tireLifeIcon from "../../assets/tire_life.svg";
 
 export default function ActivitiesPage() {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const stravaStatus = params.get("strava");
+  const stravaMessage = stravaStatus ? STRAVA_STATUS_MESSAGES[stravaStatus] : null;
+  const { refreshUser } = useAuth();
   const { activities, isLoading, error } = useActivities();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (stravaStatus !== "connected") return;
+
+    void refreshUser();
+    void invalidateAfterActivityChange();
+  }, [stravaStatus, refreshUser]);
 
   async function handleRefresh() {
     setIsRefreshing(true);
@@ -55,6 +69,14 @@ export default function ActivitiesPage() {
           />
         }
       />
+
+      {stravaMessage && (
+        <StravaStatusMessage
+          title={stravaMessage.title}
+          body={stravaMessage.body}
+          className="mb-5"
+        />
+      )}
 
       {/* Actions */}
       <div className="mb-5 grid grid-cols-2 gap-3">
